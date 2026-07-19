@@ -43,7 +43,14 @@ class BusinessNotifier extends StateNotifier<BusinessState> {
 
     try {
       final response = await _apiService.get(ApiConfig.businesses);
-      final data = response.data as List<dynamic>;
+      final List<dynamic> data;
+      if (response.data is List) {
+        data = response.data as List<dynamic>;
+      } else if (response.data is Map && response.data['data'] != null) {
+        data = response.data['data'] as List<dynamic>;
+      } else {
+        data = [];
+      }
       final businesses = data
           .map((e) => BusinessModel.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -61,23 +68,27 @@ class BusinessNotifier extends StateNotifier<BusinessState> {
     }
   }
 
-  Future<void> createBusiness({
+  Future<bool> createBusiness({
     required String name,
     required String category,
     required String city,
     String? phone,
+    String? address,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
+      final body = <String, dynamic>{
+        'name': name,
+        'category': category,
+        'city': city,
+      };
+      if (phone != null && phone.isNotEmpty) body['phone'] = phone;
+      if (address != null && address.isNotEmpty) body['address'] = address;
+
       final response = await _apiService.post(
         ApiConfig.businesses,
-        data: {
-          'name': name,
-          'category': category,
-          'city': city,
-          'phone': phone,
-        },
+        data: body,
       );
 
       final business =
@@ -87,13 +98,19 @@ class BusinessNotifier extends StateNotifier<BusinessState> {
         currentBusiness: business,
         businesses: [...state.businesses, business],
       );
+      return true;
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
         error: 'Failed to create business',
       );
+      return false;
     }
   }
+
+  bool get hasBusiness => state.currentBusiness != null;
+
+  String? get businessId => state.currentBusiness?.id;
 }
 
 final businessProvider =

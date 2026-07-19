@@ -4,15 +4,35 @@ import 'package:go_router/go_router.dart';
 
 import '../../config/app_theme.dart';
 import '../../config/routes.dart';
+import '../../providers/business_provider.dart';
+import '../../widgets/common/loading_widget.dart';
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(businessProvider.notifier).fetchBusinesses();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final businessState = ref.watch(businessProvider);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(
+          businessState.currentBusiness?.name ?? 'Dashboard',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
@@ -20,33 +40,46 @@ class DashboardScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildScoreCard(context),
-            const SizedBox(height: 24),
-            Text(
-              'Quick Actions',
-              style: Theme.of(context).textTheme.titleLarge,
+      body: businessState.isLoading
+          ? const LoadingWidget()
+          : RefreshIndicator(
+              onRefresh: () async {
+                await ref.read(businessProvider.notifier).fetchBusinesses();
+              },
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildScoreCard(context, businessState),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Quick Actions',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildQuickActions(context),
+                    const SizedBox(height: 24),
+                    _buildBusinessInfo(context, businessState),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Recent Activity',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildRecentActivity(context),
+                  ],
+                ),
+              ),
             ),
-            const SizedBox(height: 12),
-            _buildQuickActions(context),
-            const SizedBox(height: 24),
-            Text(
-              'Recent Activity',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 12),
-            _buildRecentActivity(context),
-          ],
-        ),
-      ),
     );
   }
 
-  Widget _buildScoreCard(BuildContext context) {
+  Widget _buildScoreCard(BuildContext context, BusinessState state) {
+    final score = state.currentBusiness?.profileScore ?? 0;
+    final normalizedScore = (score / 100).clamp(0.0, 1.0);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -59,17 +92,21 @@ class DashboardScreen extends ConsumerWidget {
                 fit: StackFit.expand,
                 children: [
                   CircularProgressIndicator(
-                    value: 0.72,
+                    value: normalizedScore,
                     strokeWidth: 8,
                     backgroundColor: AppColors.border,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.orange,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      score >= 70
+                          ? AppColors.success
+                          : score >= 40
+                              ? AppColors.orange
+                              : AppColors.error,
                     ),
                   ),
-                  const Center(
+                  Center(
                     child: Text(
-                      '72',
-                      style: TextStyle(
+                      score.toInt().toString(),
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -90,7 +127,9 @@ class DashboardScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Your business is performing well. Run an audit to see detailed insights.',
+                    score > 0
+                        ? 'Your profile is ${score.toInt()}% optimized. Run an audit for detailed insights.'
+                        : 'Run your first audit to get a business score.',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -117,7 +156,7 @@ class DashboardScreen extends ConsumerWidget {
         Expanded(
           child: _QuickActionCard(
             icon: Icons.edit_note,
-            label: 'Generate Post',
+            label: 'Create Post',
             color: AppColors.orange,
             onTap: () {},
           ),
@@ -135,6 +174,48 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildBusinessInfo(BuildContext context, BusinessState state) {
+    final business = state.currentBusiness;
+    if (business == null) return const SizedBox.shrink();
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Business Info',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            if (business.category != null)
+              _buildInfoRow(Icons.category_outlined, business.category!),
+            if (business.city != null)
+              _buildInfoRow(Icons.location_city_outlined, business.city!),
+            if (business.phone != null)
+              _buildInfoRow(Icons.phone_outlined, business.phone!),
+            if (business.address != null)
+              _buildInfoRow(Icons.place_outlined, business.address!),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: AppColors.textSecondary),
+          const SizedBox(width: 8),
+          Text(text, style: const TextStyle(color: AppColors.textSecondary)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildRecentActivity(BuildContext context) {
     return Card(
       child: Padding(
@@ -143,26 +224,10 @@ class DashboardScreen extends ConsumerWidget {
           children: [
             _buildActivityItem(
               context,
-              icon: Icons.star,
-              title: 'New review received',
-              subtitle: '5-star review from a customer',
-              time: '2h ago',
-            ),
-            const Divider(height: 24),
-            _buildActivityItem(
-              context,
-              icon: Icons.analytics,
-              title: 'Audit completed',
-              subtitle: 'Score improved by 5 points',
-              time: '1d ago',
-            ),
-            const Divider(height: 24),
-            _buildActivityItem(
-              context,
-              icon: Icons.edit_note,
-              title: 'Post published',
-              subtitle: 'Instagram post went live',
-              time: '2d ago',
+              icon: Icons.check_circle_outline,
+              title: 'Account created',
+              subtitle: 'Your Promoto journey has begun',
+              time: 'Today',
             ),
           ],
         ),
@@ -200,7 +265,8 @@ class DashboardScreen extends ConsumerWidget {
         ),
         Text(
           time,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+          style:
+              Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
         ),
       ],
     );
