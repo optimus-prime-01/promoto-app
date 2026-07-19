@@ -40,18 +40,19 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = authState.isLoggedIn;
       final isOnSplash = state.matchedLocation == AppRoutes.splash;
       final isOnLogin = state.matchedLocation == AppRoutes.login;
+      final isOnSignup = state.matchedLocation == AppRoutes.signup;
       final isOnOnboarding = state.matchedLocation == AppRoutes.onboarding;
 
       // Let splash handle its own logic
       if (isOnSplash) return null;
 
-      // If not logged in, redirect to login
-      if (!isLoggedIn && !isOnLogin) {
+      // If not logged in, redirect to login (allow signup page)
+      if (!isLoggedIn && !isOnLogin && !isOnSignup) {
         return AppRoutes.login;
       }
 
-      // If logged in and on login page, go to home
-      if (isLoggedIn && isOnLogin) {
+      // If logged in and on login/signup page, go to home
+      if (isLoggedIn && (isOnLogin || isOnSignup)) {
         return AppRoutes.home;
       }
 
