@@ -138,16 +138,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     ),
                   ],
                 ),
-                clipBehavior: Clip.hardEdge,
-                padding: const EdgeInsets.all(6),
-                child: FractionallySizedBox(
-                  widthFactor: 1.15,
-                  heightFactor: 1.5,
-                  alignment: Alignment.topCenter,
-                  child: Image.asset(
-                    'assets/images/logo.png',
-                    fit: BoxFit.fitWidth,
-                  ),
+                padding: const EdgeInsets.all(18),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: 24),
