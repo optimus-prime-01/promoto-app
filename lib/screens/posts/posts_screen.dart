@@ -363,6 +363,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
     final bool hasAnyImage = hasUserImage || _generatedImageUrl != null;
 
     return Container(
+      height: MediaQuery.of(context).size.height * 0.85,
       decoration: const BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -370,14 +371,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.85,
-        minChildSize: 0.5,
-        maxChildSize: 0.95,
-        expand: false,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
+      child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -563,7 +557,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _captionController,
-                  maxLines: 5,
+                  maxLines: 3,
                   decoration: const InputDecoration(
                     hintText: 'Write your post caption...',
                   ),
@@ -671,8 +665,6 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                 const SizedBox(height: 16),
               ],
             ),
-          );
-        },
       ),
     );
   }
