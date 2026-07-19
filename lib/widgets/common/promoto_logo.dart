@@ -15,9 +15,8 @@ class PromoToLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = darkBackground ? AppColors.white : AppColors.navy;
-    final iconColor = darkBackground ? AppColors.navy : AppColors.white;
-    final textColor = darkBackground ? AppColors.white : AppColors.navy;
+    final isDark = darkBackground ||
+        Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -26,18 +25,26 @@ class PromoToLogo extends StatelessWidget {
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: bgColor,
+            color: isDark ? AppColors.white : AppColors.navy,
             borderRadius: BorderRadius.circular(size * 0.24),
             boxShadow: [
               BoxShadow(
-                color: AppColors.navy.withValues(alpha: 0.2),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: CustomPaint(
-            painter: _LogoPainter(color: iconColor),
+          padding: EdgeInsets.all(size * 0.15),
+          child: ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              isDark ? AppColors.navy : AppColors.white,
+              BlendMode.srcIn,
+            ),
+            child: Image.asset(
+              'assets/images/logo.png',
+              fit: BoxFit.contain,
+            ),
           ),
         ),
         if (showText) ...[
@@ -48,9 +55,9 @@ class PromoToLogo extends StatelessWidget {
                 TextSpan(
                   text: 'Promo',
                   style: TextStyle(
-                    fontSize: size * 0.35,
+                    fontSize: size * 0.3,
                     fontWeight: FontWeight.w800,
-                    color: textColor,
+                    color: isDark ? AppColors.white : AppColors.navy,
                     fontFamily: 'Poppins',
                     letterSpacing: -0.5,
                   ),
@@ -58,7 +65,7 @@ class PromoToLogo extends StatelessWidget {
                 TextSpan(
                   text: 'to',
                   style: TextStyle(
-                    fontSize: size * 0.35,
+                    fontSize: size * 0.3,
                     fontWeight: FontWeight.w800,
                     color: AppColors.orange,
                     fontFamily: 'Poppins',
@@ -72,72 +79,4 @@ class PromoToLogo extends StatelessWidget {
       ],
     );
   }
-}
-
-class _LogoPainter extends CustomPainter {
-  final Color color;
-
-  _LogoPainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final strokePaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.04
-      ..strokeCap = StrokeCap.round;
-
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-    final r = size.width * 0.28;
-
-    // Outer ring (signal/broadcast icon)
-    final arcRect = Rect.fromCircle(center: Offset(cx, cy), radius: r);
-    canvas.drawArc(arcRect, -2.3, 1.5, false, strokePaint);
-    canvas.drawArc(arcRect, 0.8, 1.5, false, strokePaint);
-
-    // Inner ring
-    final innerR = r * 0.65;
-    final innerRect = Rect.fromCircle(center: Offset(cx, cy), radius: innerR);
-    canvas.drawArc(innerRect, -2.0, 0.9, false, strokePaint);
-    canvas.drawArc(innerRect, 1.1, 0.9, false, strokePaint);
-
-    // Center dot
-    canvas.drawCircle(Offset(cx, cy), size.width * 0.06, paint);
-
-    // Upward arrow (growth indicator)
-    final arrowPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.045
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    final arrowBottom = cy + r * 0.7;
-    final arrowTop = cy - r * 0.5;
-    // Vertical line
-    canvas.drawLine(
-      Offset(cx, arrowBottom),
-      Offset(cx, arrowTop),
-      arrowPaint,
-    );
-    // Arrow head
-    canvas.drawLine(
-      Offset(cx - size.width * 0.08, arrowTop + size.width * 0.1),
-      Offset(cx, arrowTop),
-      arrowPaint,
-    );
-    canvas.drawLine(
-      Offset(cx + size.width * 0.08, arrowTop + size.width * 0.1),
-      Offset(cx, arrowTop),
-      arrowPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
