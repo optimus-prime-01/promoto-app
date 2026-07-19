@@ -600,16 +600,17 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                 Text('Platform',
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
-                Row(
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     _PlatformOption(
-                      label: 'Both',
+                      label: 'All',
                       icon: Icons.public,
                       isSelected: _selectedPlatform == 'both',
                       onTap: () =>
                           setState(() => _selectedPlatform = 'both'),
                     ),
-                    const SizedBox(width: 8),
                     _PlatformOption(
                       label: 'Facebook',
                       icon: Icons.facebook,
@@ -617,13 +618,19 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                       onTap: () =>
                           setState(() => _selectedPlatform = 'facebook'),
                     ),
-                    const SizedBox(width: 8),
                     _PlatformOption(
                       label: 'Instagram',
                       icon: Icons.camera_alt_outlined,
                       isSelected: _selectedPlatform == 'instagram',
                       onTap: () =>
                           setState(() => _selectedPlatform = 'instagram'),
+                    ),
+                    _PlatformOption(
+                      label: 'WhatsApp',
+                      icon: Icons.chat,
+                      isSelected: _selectedPlatform == 'whatsapp',
+                      onTap: () =>
+                          setState(() => _selectedPlatform = 'whatsapp'),
                     ),
                   ],
                 ),
@@ -762,10 +769,10 @@ class _PlatformOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+          width: (MediaQuery.of(context).size.width - 64) / 4 - 6,
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected
@@ -793,7 +800,7 @@ class _PlatformOption extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }
+
