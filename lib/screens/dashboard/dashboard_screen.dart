@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../config/app_theme.dart';
 import '../../config/routes.dart';
 import '../../providers/business_provider.dart';
+import '../../providers/tab_provider.dart';
 import '../../widgets/common/loading_widget.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -189,7 +190,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               icon: Icons.edit_note,
               label: 'Create Post',
               color: AppColors.orange,
-              onTap: () {},
+              onTap: () => ref.read(tabIndexProvider.notifier).state = 2,
             ),
           ),
           const SizedBox(width: 10),
@@ -199,7 +200,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               icon: Icons.star_outline,
               label: 'Reviews',
               color: AppColors.success,
-              onTap: () {},
+              onTap: () => ref.read(tabIndexProvider.notifier).state = 1,
             ),
           ),
           const SizedBox(width: 10),

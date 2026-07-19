@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/app_theme.dart';
+import '../../providers/tab_provider.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../reviews/reviews_screen.dart';
 import '../posts/posts_screen.dart';
 import '../customers/customers_screen.dart';
 import '../profile/profile_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
-  final _screens = const [
+  static const _screens = [
     DashboardScreen(),
     ReviewsScreen(),
     PostsScreen(),
@@ -26,15 +21,17 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentIndex = ref.watch(tabIndexProvider);
+
     return Scaffold(
       body: IndexedStack(
-        index: _currentIndex,
+        index: currentIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
+        currentIndex: currentIndex,
+        onTap: (index) => ref.read(tabIndexProvider.notifier).state = index,
         selectedItemColor: AppColors.navy,
         unselectedItemColor: AppColors.textSecondary,
         type: BottomNavigationBarType.fixed,
@@ -50,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Reviews',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.edit_note_outlined),
+            icon: Icon(Icons.edit_note),
             activeIcon: Icon(Icons.edit_note),
             label: 'Posts',
           ),
