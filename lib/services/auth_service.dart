@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../config/api_config.dart';
@@ -7,53 +8,57 @@ import 'api_service.dart';
 import 'storage_service.dart';
 
 class AuthService {
-  final FirebaseAuth _firebaseAuth;
-  final GoogleSignIn _googleSignIn;
   final ApiService _apiService;
   final StorageService _storageService;
 
   AuthService({
-    required this._apiService,
-    required this._storageService,
-  })  : _firebaseAuth = FirebaseAuth.instance,
-        _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
-
-  User? get currentFirebaseUser => _firebaseAuth.currentUser;
+    required ApiService apiService,
+    required StorageService storageService,
+  })  : _apiService = apiService,
+        _storageService = storageService;
 
   Future<UserModel?> signInWithGoogle() async {
-    final googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return null;
+    try {
+      final googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return null;
 
-    final googleAuth = await googleUser.authentication;
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
+      final googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-    final userCredential = await _firebaseAuth.signInWithCredential(credential);
-    if (userCredential.user == null) return null;
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      if (userCredential.user == null) return null;
 
-    final firebaseToken = await userCredential.user!.getIdToken();
-    if (firebaseToken == null) return null;
+      final firebaseToken = await userCredential.user!.getIdToken();
+      if (firebaseToken == null) return null;
 
-    return _authenticateWithBackend(firebaseToken);
+      return _authenticateWithBackend(firebaseToken);
+    } catch (e) {
+      debugPrint('Google sign in failed: $e');
+      return null;
+    }
   }
 
   Future<UserModel?> _authenticateWithBackend(String firebaseToken) async {
-    final response = await _apiService.post(
-      ApiConfig.login,
-      data: {'firebaseToken': firebaseToken},
-    );
+    try {
+      final response = await _apiService.post(
+        ApiConfig.login,
+        data: {'firebaseToken': firebaseToken},
+      );
 
-    final data = response.data as Map<String, dynamic>;
-    final token = data['token'] as String;
-    await _storageService.saveToken(token);
+      final data = response.data as Map<String, dynamic>;
+      final token = data['accessToken'] as String;
+      await _storageService.saveToken(token);
 
-    if (data['refreshToken'] != null) {
-      await _storageService.saveRefreshToken(data['refreshToken'] as String);
+      return UserModel.fromJson(data['user'] as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Backend auth failed: $e');
+      return null;
     }
-
-    return UserModel.fromJson(data['user'] as Map<String, dynamic>);
   }
 
   Future<UserModel?> getCurrentUser() async {
@@ -70,13 +75,21 @@ class AuthService {
   }
 
   Future<bool> isAuthenticated() async {
-    final token = await _storageService.getToken();
-    return token != null;
+    try {
+      final token = await _storageService.getToken();
+      return token != null && token.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
-    await _firebaseAuth.signOut();
+    try {
+      await GoogleSignIn().signOut();
+      await FirebaseAuth.instance.signOut();
+    } catch (_) {
+      // ignore firebase signout errors
+    }
     await _storageService.clearAll();
   }
 }

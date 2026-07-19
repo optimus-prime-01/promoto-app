@@ -1,39 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../config/app_theme.dart';
 import '../../config/routes.dart';
-import '../../providers/auth_provider.dart';
+import '../../services/storage_service.dart';
 
-class SplashScreen extends ConsumerStatefulWidget {
+class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  ConsumerState<SplashScreen> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuth();
+    _navigate();
   }
 
-  Future<void> _checkAuth() async {
-    await Future.delayed(const Duration(milliseconds: 1500));
+  Future<void> _navigate() async {
+    await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
 
-    final authNotifier = ref.read(authProvider.notifier);
-    await authNotifier.checkAuthStatus();
+    try {
+      final storage = StorageService();
+      final token = await storage.getToken();
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    final state = ref.read(authProvider);
-    if (state.isLoggedIn) {
-      context.go(AppRoutes.home);
-    } else {
+      if (token != null && token.isNotEmpty) {
+        context.go(AppRoutes.home);
+      } else {
+        context.go(AppRoutes.login);
+      }
+    } catch (_) {
+      if (!mounted) return;
       context.go(AppRoutes.login);
     }
   }
