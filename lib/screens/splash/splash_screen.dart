@@ -1,4 +1,4 @@
-import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,74 +18,52 @@ class SplashScreen extends ConsumerStatefulWidget {
 }
 
 class _SplashScreenState extends ConsumerState<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _rotateController;
-  late AnimationController _fadeController;
-  late AnimationController _scaleController;
-  late Animation<double> _rotateAnimation;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   late Animation<double> _fadeAnimation;
+  late Animation<double> _blurAnimation;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _textFadeAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Logo rotation (spin in)
-    _rotateController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1500),
     );
-    _rotateAnimation = Tween<double>(begin: -2 * pi, end: 0).animate(
+
+    // Blur to clear (10 -> 0)
+    _blurAnimation = Tween<double>(begin: 15.0, end: 0.0).animate(
       CurvedAnimation(
-        parent: _rotateController,
-        curve: Curves.easeOutBack,
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
       ),
     );
 
-    // Logo scale (bounce in)
-    _scaleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    );
-    _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    // Fade in (0 -> 1)
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _scaleController,
-        curve: Curves.elasticOut,
+        parent: _controller,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
       ),
     );
 
-    // Text fade in
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeIn,
-    );
-    _textFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    // Scale (0.8 -> 1)
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
-        parent: _fadeController,
-        curve: const Interval(0.3, 1.0, curve: Curves.easeIn),
+        parent: _controller,
+        curve: const Interval(0.0, 0.7, curve: Curves.easeOutBack),
       ),
     );
 
-    // Start animations in sequence
-    _scaleController.forward();
-    _rotateController.forward();
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (mounted) _fadeController.forward();
-    });
-
+    _controller.forward();
     _navigate();
   }
 
   @override
   void dispose() {
-    _rotateController.dispose();
-    _fadeController.dispose();
-    _scaleController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -125,30 +103,33 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.navy,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Animated logo
-            AnimatedBuilder(
-              animation: Listenable.merge([
-                _rotateController,
-                _scaleController,
-              ]),
-              builder: (context, child) {
-                return Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: Transform.rotate(
-                    angle: _rotateAnimation.value,
-                    child: child,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return FadeTransition(
+              opacity: _fadeAnimation,
+              child: Transform.scale(
+                scale: _scaleAnimation.value,
+                child: ImageFiltered(
+                  imageFilter: ImageFilter.blur(
+                    sigmaX: _blurAnimation.value,
+                    sigmaY: _blurAnimation.value,
                   ),
-                );
-              },
-              child: Container(
-                width: 110,
-                height: 110,
+                  child: child,
+                ),
+              ),
+            );
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Logo
+              Container(
+                width: 120,
+                height: 120,
                 decoration: BoxDecoration(
                   color: AppColors.white,
-                  borderRadius: BorderRadius.circular(26),
+                  borderRadius: BorderRadius.circular(28),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.2),
@@ -158,13 +139,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   ],
                 ),
                 clipBehavior: Clip.hardEdge,
-                padding: const EdgeInsets.only(
-                  left: 14,
-                  right: 14,
-                  top: 10,
-                ),
+                padding: const EdgeInsets.all(6),
                 child: FractionallySizedBox(
-                  heightFactor: 1.3,
+                  widthFactor: 1.15,
+                  heightFactor: 1.5,
                   alignment: Alignment.topCenter,
                   child: Image.asset(
                     'assets/images/logo.png',
@@ -172,12 +150,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            // Animated text
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: RichText(
+              const SizedBox(height: 24),
+              // Text
+              RichText(
                 text: const TextSpan(
                   children: [
                     TextSpan(
@@ -203,11 +178,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            FadeTransition(
-              opacity: _textFadeAnimation,
-              child: Text(
+              const SizedBox(height: 8),
+              Text(
                 'Grow Your Local Business',
                 style: TextStyle(
                   fontSize: 14,
@@ -215,16 +187,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                   fontFamily: 'Poppins',
                 ),
               ),
-            ),
-            const SizedBox(height: 48),
-            FadeTransition(
-              opacity: _textFadeAnimation,
-              child: LoadingAnimationWidget.staggeredDotsWave(
+              const SizedBox(height: 48),
+              LoadingAnimationWidget.staggeredDotsWave(
                 color: AppColors.orange,
                 size: 40,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

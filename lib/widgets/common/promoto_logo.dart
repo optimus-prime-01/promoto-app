@@ -33,13 +33,10 @@ class PromoToLogo extends StatelessWidget {
             ],
           ),
           clipBehavior: Clip.hardEdge,
-          padding: EdgeInsets.only(
-            left: size * 0.1,
-            right: size * 0.1,
-            top: size * 0.08,
-          ),
+          padding: EdgeInsets.all(size * 0.05),
           child: FractionallySizedBox(
-            heightFactor: 1.3,
+            widthFactor: 1.15,
+            heightFactor: 1.5,
             alignment: Alignment.topCenter,
             child: Image.asset(
               'assets/images/logo.png',
