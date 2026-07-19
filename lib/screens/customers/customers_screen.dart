@@ -19,12 +19,30 @@ class CustomersScreen extends ConsumerStatefulWidget {
 }
 
 class _CustomersScreenState extends ConsumerState<CustomersScreen> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
       ref.read(customersProvider.notifier).fetchCustomers();
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<CustomerModel> _filterCustomers(List<CustomerModel> customers) {
+    if (_searchQuery.isEmpty) return customers;
+    final query = _searchQuery.toLowerCase();
+    return customers.where((c) {
+      return c.displayName.toLowerCase().contains(query) ||
+          c.phone.toLowerCase().contains(query);
+    }).toList();
   }
 
   @override
@@ -76,13 +94,41 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                             children: [
                               _buildStats(context, state),
                               const SizedBox(height: 16),
-                              ...state.customers.map(
+                              _buildSearchBar(context),
+                              const SizedBox(height: 16),
+                              ..._filterCustomers(state.customers).map(
                                 (c) => _CustomerCard(customer: c),
                               ),
                               const SizedBox(height: 80),
                             ],
                           ),
                         ),
+    );
+  }
+
+  Widget _buildSearchBar(BuildContext context) {
+    return TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Search by name or phone...',
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: _searchQuery.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                },
+              )
+            : null,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+      onChanged: (value) {
+        setState(() => _searchQuery = value);
+      },
     );
   }
 
