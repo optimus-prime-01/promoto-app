@@ -121,7 +121,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   CircularProgressIndicator(
                     value: normalizedScore,
                     strokeWidth: 8,
-                    backgroundColor: Theme.of(context).dividerColor,
+                    backgroundColor: AppColors.border.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       score >= 70
                           ? AppColors.success
