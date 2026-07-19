@@ -34,8 +34,9 @@ class ApiConfig {
   static const String customerById = '/customers/{id}';
 
   // Subscription
-  static const String subscription = '/subscription';
-  static const String subscriptionPlans = '/subscription/plans';
+  static const String subscription = '/subscriptions';
+  static const String subscriptionCurrent = '/subscriptions/current';
+  static const String subscriptionPlans = '/subscriptions/plans';
 
   // Profile
   static const String profile = '/profile';
