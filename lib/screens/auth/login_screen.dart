@@ -6,6 +6,7 @@ import '../../config/app_theme.dart';
 import '../../config/routes.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/common/app_button.dart';
+import '../../widgets/common/promoto_logo.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -29,26 +30,7 @@ class LoginScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(flex: 2),
-              Container(
-                width: 88,
-                height: 88,
-                decoration: BoxDecoration(
-                  color: AppColors.navy,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  Icons.rocket_launch_outlined,
-                  size: 40,
-                  color: AppColors.white,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Promoto',
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: AppColors.navy,
-                    ),
-              ),
+              const PromoToLogo(size: 88),
               const SizedBox(height: 8),
               Text(
                 'Grow your local business with\nAI-powered tools',

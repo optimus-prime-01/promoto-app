@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../config/app_theme.dart';
@@ -39,9 +40,41 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(AppColors.navy),
+    return Center(
+      child: LoadingAnimationWidget.staggeredDotsWave(
+        color: AppColors.navy,
+        size: 45,
+      ),
+    );
+  }
+}
+
+class LoadingFullScreen extends StatelessWidget {
+  final String? message;
+
+  const LoadingFullScreen({super.key, this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LoadingAnimationWidget.fourRotatingDots(
+            color: AppColors.navy,
+            size: 50,
+          ),
+          if (message != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              message!,
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

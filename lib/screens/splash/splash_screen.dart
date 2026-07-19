@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../../config/app_theme.dart';
 import '../../config/routes.dart';
 import '../../providers/business_provider.dart';
 import '../../services/storage_service.dart';
+import '../../widgets/common/promoto_logo.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -14,11 +16,30 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _fadeController;
+  late Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
+    _fadeController.forward();
     _navigate();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
   }
 
   Future<void> _navigate() async {
@@ -33,7 +54,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (!mounted) return;
 
       if (token != null && token.isNotEmpty) {
-        // Token exists, fetch businesses to check if onboarding is needed
         await ref.read(businessProvider.notifier).fetchBusinesses();
 
         if (!mounted) return;
@@ -58,42 +78,28 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.navy,
       body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.circular(24),
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const PromoToLogo(size: 100, darkBackground: true),
+              const SizedBox(height: 8),
+              Text(
+                'Grow Your Local Business',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.white.withValues(alpha: 0.7),
+                  fontFamily: 'Poppins',
+                ),
               ),
-              child: const Icon(
-                Icons.rocket_launch_outlined,
-                size: 48,
-                color: AppColors.navy,
+              const SizedBox(height: 48),
+              LoadingAnimationWidget.staggeredDotsWave(
+                color: AppColors.orange,
+                size: 40,
               ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Promoto',
-              style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Grow Your Local Business',
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: AppColors.white.withValues(alpha: 0.8),
-                  ),
-            ),
-            const SizedBox(height: 48),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.orange),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
