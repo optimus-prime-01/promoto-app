@@ -410,23 +410,23 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                         child: hasUserImage
                             ? Image.file(
                                 _pickedImageFile!,
-                                height: 200,
+                                height: 160,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                               )
                             : CachedNetworkImage(
                                 imageUrl: _generatedImageUrl!,
-                                height: 200,
+                                height: 160,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
-                                  height: 200,
+                                  height: 160,
                                   color: AppColors.border,
                                   child: const Center(
                                       child: CircularProgressIndicator()),
                                 ),
                                 errorWidget: (context, url, error) => Container(
-                                  height: 200,
+                                  height: 160,
                                   color: AppColors.border,
                                   child: const Icon(Icons.broken_image,
                                       color: AppColors.textSecondary),
@@ -772,8 +772,8 @@ class _PlatformOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-          width: (MediaQuery.of(context).size.width - 64) / 4 - 6,
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          width: (MediaQuery.of(context).size.width - 80) / 4,
+          padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: isSelected
                 ? AppColors.navy.withValues(alpha: 0.1)
