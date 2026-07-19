@@ -1,5 +1,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+// TODO(security): Migrate token storage from SharedPreferences to
+// flutter_secure_storage. SharedPreferences stores data in plain text
+// which is accessible on rooted/jailbroken devices. JWT tokens are
+// sensitive credentials and should use encrypted storage.
+// The flutter_secure_storage package is already in pubspec.yaml.
 class StorageService {
   static const _tokenKey = 'jwt_token';
   static const _refreshTokenKey = 'refresh_token';

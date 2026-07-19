@@ -4,7 +4,7 @@
         android:label="Promoto"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"> <!-- TODO(security): Set to false for production builds. Use network_security_config.xml to allow cleartext only for localhost in debug. -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

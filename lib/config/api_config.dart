@@ -1,9 +1,13 @@
 class ApiConfig {
   ApiConfig._();
 
-  // localhost works with adb reverse tcp:3000 tcp:3000
-  // Change to actual server URL for production
-  static const String baseUrl = 'http://localhost:3000/api/v1';
+  // TODO(security): Use dart-define for base URL per environment.
+  // Production builds must use HTTPS.
+  // Example: flutter build --dart-define=API_BASE_URL=https://api.promoto.in/api/v1
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://localhost:3000/api/v1',
+  );
 
   // Auth
   static const String login = '/auth/login';
