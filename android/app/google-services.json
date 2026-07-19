@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "866310575767-a63q12o3p6c24cqihq9dbal28n2vs6bf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.promoto.app",
+            "certificate_hash": "472207604d425a4ab8cbe890fea2f856b3bba20a"
+          }
+        },
+        {
           "client_id": "866310575767-i7gqkomqs405lt3ijtodh1pudnm286ht.apps.googleusercontent.com",
           "client_type": 3
         }

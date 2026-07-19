@@ -1,7 +1,9 @@
 class ApiConfig {
   ApiConfig._();
 
-  static const String baseUrl = 'http://localhost:3000/api/v1';
+  // Use 10.0.2.2 for Android emulator (maps to host localhost)
+  // Change to actual server URL for production
+  static const String baseUrl = 'http://10.0.2.2:3000/api/v1';
 
   // Auth
   static const String login = '/auth/login';
