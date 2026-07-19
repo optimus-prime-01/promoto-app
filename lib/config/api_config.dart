@@ -9,6 +9,13 @@ class ApiConfig {
     defaultValue: 'http://localhost:3000/api/v1',
   );
 
+  // Razorpay - injected via dart-define for production builds.
+  // Example: flutter build --dart-define=RAZORPAY_KEY_ID=rzp_live_xxxxx
+  static const String razorpayKeyId = String.fromEnvironment(
+    'RAZORPAY_KEY_ID',
+    defaultValue: 'rzp_test_TFGwQAfNMSxrNC',
+  );
+
   // Auth
   static const String login = '/auth/login';
   static const String logout = '/auth/logout';

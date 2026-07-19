@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
-import '../../config/app_config.dart';
+import '../../config/api_config.dart';
 import '../../config/app_theme.dart';
 import '../../providers/subscription_provider.dart';
 
@@ -195,7 +195,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
       if (subscriptionId != null && subscriptionId.isNotEmpty) {
         final options = {
-          'key': AppConfig.razorpayKeyId,
+          'key': ApiConfig.razorpayKeyId,
           'subscription_id': subscriptionId,
           'name': 'Promoto',
           'description': 'Promoto ${planId[0].toUpperCase()}${planId.substring(1)} Plan',
