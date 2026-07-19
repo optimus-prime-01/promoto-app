@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "866310575767",
+    "project_id": "promoto-3aba1",
+    "storage_bucket": "promoto-3aba1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866310575767:android:abc705bd094174e302fbd2",
+        "android_client_info": {
+          "package_name": "com.promoto.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "866310575767-i7gqkomqs405lt3ijtodh1pudnm286ht.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKTO_pNC5BYNMiongbPiCP2Zt78AJJpiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "866310575767-i7gqkomqs405lt3ijtodh1pudnm286ht.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
