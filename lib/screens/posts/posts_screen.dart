@@ -391,11 +391,11 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   'Create Post',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
                 // Image Section
-                Text('Image', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
+                Text('Image', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 6),
                 if (hasAnyImage)
                   Stack(
                     children: [
@@ -404,23 +404,23 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                         child: hasUserImage
                             ? Image.file(
                                 _pickedImageFile!,
-                                height: 160,
+                                height: 120,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                               )
                             : CachedNetworkImage(
                                 imageUrl: _generatedImageUrl!,
-                                height: 160,
+                                height: 120,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
-                                  height: 160,
+                                  height: 120,
                                   color: AppColors.border,
                                   child: const Center(
                                       child: CircularProgressIndicator()),
                                 ),
                                 errorWidget: (context, url, error) => Container(
-                                  height: 160,
+                                  height: 120,
                                   color: AppColors.border,
                                   child: const Icon(Icons.broken_image,
                                       color: AppColors.textSecondary),
@@ -469,17 +469,17 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   GestureDetector(
                     onTap: _pickImage,
                     child: SizedBox(
-                      height: 160,
+                      height: 80,
                       width: double.infinity,
                       child: CustomPaint(
                         painter: _DottedBorderPainter(color: AppColors.border),
                         child: const Center(
-                          child: Column(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.add_photo_alternate_outlined,
-                                  size: 40, color: AppColors.textSecondary),
-                              SizedBox(height: 8),
+                                  size: 28, color: AppColors.textSecondary),
+                              SizedBox(width: 8),
                               Text(
                                 'Tap to upload image',
                                 style: TextStyle(
