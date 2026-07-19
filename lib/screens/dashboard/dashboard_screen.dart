@@ -34,6 +34,32 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 4),
+            child: TextButton.icon(
+              onPressed: () => context.push(AppRoutes.subscription),
+              icon: const Icon(
+                Icons.workspace_premium,
+                size: 18,
+                color: AppColors.orange,
+              ),
+              label: const Text(
+                'Upgrade',
+                style: TextStyle(
+                  color: AppColors.orange,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: const BorderSide(color: AppColors.orange, width: 1),
+                ),
+              ),
+            ),
+          ),
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
             onPressed: () {},

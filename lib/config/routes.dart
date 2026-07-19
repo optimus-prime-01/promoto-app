@@ -8,6 +8,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/audit/audit_screen.dart';
+import '../screens/subscription/subscription_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -17,6 +18,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String home = '/home';
   static const String audit = '/audit';
+  static const String subscription = '/subscription';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -70,6 +72,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.audit,
         builder: (context, state) => const AuditScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.subscription,
+        builder: (context, state) => const SubscriptionScreen(),
       ),
     ],
   );

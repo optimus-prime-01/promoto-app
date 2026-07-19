@@ -202,7 +202,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             context,
             icon: Icons.credit_card_outlined,
             title: 'Subscription',
-            onTap: () {},
+            onTap: () => context.push(AppRoutes.subscription),
           ),
           _buildMenuItem(
             context,
