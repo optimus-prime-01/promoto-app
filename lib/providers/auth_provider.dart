@@ -75,6 +75,31 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> sendPhoneOtp(String phoneNumber) async {
+    await _authService.sendPhoneOtp(phoneNumber);
+  }
+
+  Future<void> verifyPhoneOtp(String otp) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    try {
+      final user = await _authService.verifyPhoneOtp(otp);
+      if (user != null) {
+        state = AuthState(isLoggedIn: true, user: user, isLoading: false);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Verification failed',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Invalid OTP. Try again.',
+      );
+    }
+  }
+
   Future<void> signOut() async {
     await _authService.signOut();
     state = const AuthState();

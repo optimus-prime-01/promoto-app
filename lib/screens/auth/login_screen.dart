@@ -81,6 +81,20 @@ class LoginScreen extends ConsumerWidget {
                   ref.read(authProvider.notifier).signInWithGoogle();
                 },
               ),
+              const SizedBox(height: 12),
+              AppButton(
+                text: 'Sign in with Phone',
+                icon: Icons.phone,
+                isOutlined: true,
+                width: double.infinity,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const PhoneLoginScreen(),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 16),
               Text(
                 'By signing in, you agree to our\nTerms of Service and Privacy Policy',
@@ -95,5 +109,198 @@ class LoginScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+class PhoneLoginScreen extends ConsumerStatefulWidget {
+  const PhoneLoginScreen({super.key});
+
+  @override
+  ConsumerState<PhoneLoginScreen> createState() => _PhoneLoginScreenState();
+}
+
+class _PhoneLoginScreenState extends ConsumerState<PhoneLoginScreen> {
+  final _phoneController = TextEditingController();
+  final _otpController = TextEditingController();
+  bool _otpSent = false;
+  bool _isLoading = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
+      if (next.isLoggedIn) {
+        context.go(AppRoutes.home);
+      }
+    });
+
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        title: const Text('Sign in with Phone'),
+        backgroundColor: AppColors.white,
+        foregroundColor: AppColors.navy,
+        elevation: 0,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _otpSent ? 'Enter OTP' : 'Enter your phone number',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    color: AppColors.navy,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _otpSent
+                  ? 'We sent a 6-digit code to +91${_phoneController.text}'
+                  : 'We will send you a verification code',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 32),
+            if (!_otpSent) ...[
+              TextField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                maxLength: 10,
+                decoration: InputDecoration(
+                  prefixText: '+91 ',
+                  hintText: '9876543210',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.navy,
+                      width: 2,
+                    ),
+                  ),
+                  counterText: '',
+                ),
+              ),
+            ] else ...[
+              TextField(
+                controller: _otpController,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 24,
+                  letterSpacing: 8,
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: InputDecoration(
+                  hintText: '------',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.navy,
+                      width: 2,
+                    ),
+                  ),
+                  counterText: '',
+                ),
+              ),
+            ],
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                _error!,
+                style: TextStyle(color: AppColors.error, fontSize: 14),
+              ),
+            ],
+            const SizedBox(height: 24),
+            AppButton(
+              text: _otpSent ? 'Verify OTP' : 'Send OTP',
+              isLoading: _isLoading,
+              width: double.infinity,
+              onPressed: _otpSent ? _verifyOtp : _sendOtp,
+            ),
+            if (_otpSent) ...[
+              const SizedBox(height: 16),
+              Center(
+                child: TextButton(
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          setState(() {
+                            _otpSent = false;
+                            _otpController.clear();
+                            _error = null;
+                          });
+                        },
+                  child: const Text('Change phone number'),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _sendOtp() async {
+    final phone = _phoneController.text.trim();
+    if (phone.length != 10) {
+      setState(() => _error = 'Enter a valid 10-digit phone number');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      await ref
+          .read(authProvider.notifier)
+          .sendPhoneOtp('+91$phone');
+      setState(() {
+        _otpSent = true;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _error = 'Failed to send OTP. Try again.';
+      });
+    }
+  }
+
+  Future<void> _verifyOtp() async {
+    final otp = _otpController.text.trim();
+    if (otp.length != 6) {
+      setState(() => _error = 'Enter the 6-digit OTP');
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      await ref.read(authProvider.notifier).verifyPhoneOtp(otp);
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _error = 'Invalid OTP. Try again.';
+      });
+    }
   }
 }

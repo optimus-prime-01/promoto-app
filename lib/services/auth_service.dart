@@ -74,6 +74,53 @@ class AuthService {
     }
   }
 
+  String? _verificationId;
+
+  Future<void> sendPhoneOtp(String phoneNumber) async {
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      timeout: const Duration(seconds: 60),
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await FirebaseAuth.instance.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        debugPrint('Phone verification failed: ${e.message}');
+        throw Exception(e.message);
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        _verificationId = verificationId;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+    );
+  }
+
+  Future<UserModel?> verifyPhoneOtp(String otp) async {
+    if (_verificationId == null) {
+      throw Exception('No verification in progress');
+    }
+
+    try {
+      final credential = PhoneAuthProvider.credential(
+        verificationId: _verificationId!,
+        smsCode: otp,
+      );
+
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+      if (userCredential.user == null) return null;
+
+      final firebaseToken = await userCredential.user!.getIdToken();
+      if (firebaseToken == null) return null;
+
+      return _authenticateWithBackend(firebaseToken);
+    } catch (e) {
+      debugPrint('OTP verification failed: $e');
+      return null;
+    }
+  }
+
   Future<bool> isAuthenticated() async {
     try {
       final token = await _storageService.getToken();
