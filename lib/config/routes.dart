@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/auth/signup_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/audit/audit_screen.dart';
@@ -19,6 +20,7 @@ class AppRoutes {
 
   static const String splash = '/';
   static const String login = '/login';
+  static const String signup = '/signup';
   static const String onboarding = '/onboarding';
   static const String home = '/home';
   static const String audit = '/audit';
@@ -68,6 +70,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.signup,
+        builder: (context, state) => const SignupScreen(),
       ),
       GoRoute(
         path: AppRoutes.onboarding,
