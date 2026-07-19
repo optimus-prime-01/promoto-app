@@ -7,6 +7,7 @@ import '../../config/routes.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/automation_provider.dart';
 import '../../providers/business_provider.dart';
+import '../../providers/theme_provider.dart';
 import '../../widgets/common/loading_widget.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -223,6 +224,48 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             onTap: () => context.push(AppRoutes.about),
           ),
 
+          const SizedBox(height: 16),
+
+          // Theme
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Appearance',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildThemeOption(
+                    context,
+                    ref,
+                    'Light',
+                    Icons.light_mode,
+                    ThemeMode.light,
+                  ),
+                  _buildThemeOption(
+                    context,
+                    ref,
+                    'Dark',
+                    Icons.dark_mode,
+                    ThemeMode.dark,
+                  ),
+                  _buildThemeOption(
+                    context,
+                    ref,
+                    'System',
+                    Icons.settings_brightness,
+                    ThemeMode.system,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           const SizedBox(height: 24),
 
           // Sign out
@@ -278,6 +321,36 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       title: Text(title),
       trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
       onTap: onTap,
+    );
+  }
+
+  Widget _buildThemeOption(
+    BuildContext context,
+    WidgetRef ref,
+    String label,
+    IconData icon,
+    ThemeMode mode,
+  ) {
+    final currentMode = ref.watch(themeProvider);
+    final isSelected = currentMode == mode;
+
+    return RadioListTile<ThemeMode>(
+      value: mode,
+      groupValue: currentMode,
+      onChanged: (value) {
+        if (value != null) {
+          ref.read(themeProvider.notifier).setTheme(value);
+        }
+      },
+      title: Text(label, style: const TextStyle(fontSize: 14)),
+      secondary: Icon(
+        icon,
+        color: isSelected ? AppColors.orange : AppColors.textSecondary,
+        size: 20,
+      ),
+      activeColor: AppColors.orange,
+      dense: true,
+      contentPadding: EdgeInsets.zero,
     );
   }
 }
