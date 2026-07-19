@@ -206,15 +206,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           _buildMenuItem(
             context,
+            icon: Icons.qr_code,
+            title: 'Review QR Code',
+            onTap: () => context.push(AppRoutes.qrReview),
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.help_outline,
             title: 'Help & Support',
-            onTap: () {},
+            onTap: () => context.push(AppRoutes.about),
           ),
           _buildMenuItem(
             context,
             icon: Icons.info_outline,
             title: 'About',
-            onTap: () {},
+            onTap: () => context.push(AppRoutes.about),
           ),
 
           const SizedBox(height: 24),

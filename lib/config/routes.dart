@@ -9,6 +9,10 @@ import '../screens/onboarding/onboarding_screen.dart';
 import '../screens/home/home_screen.dart';
 import '../screens/audit/audit_screen.dart';
 import '../screens/subscription/subscription_screen.dart';
+import '../screens/keywords/keywords_screen.dart';
+import '../screens/competitors/competitors_screen.dart';
+import '../screens/qr_review/qr_review_screen.dart';
+import '../screens/about/about_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -19,6 +23,10 @@ class AppRoutes {
   static const String home = '/home';
   static const String audit = '/audit';
   static const String subscription = '/subscription';
+  static const String keywords = '/keywords';
+  static const String competitors = '/competitors';
+  static const String qrReview = '/qr-review';
+  static const String about = '/about';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -76,6 +84,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.subscription,
         builder: (context, state) => const SubscriptionScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.keywords,
+        builder: (context, state) => const KeywordsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.competitors,
+        builder: (context, state) => const CompetitorsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.qrReview,
+        builder: (context, state) => const QrReviewScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.about,
+        builder: (context, state) => const AboutScreen(),
       ),
     ],
   );

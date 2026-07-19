@@ -168,35 +168,72 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildQuickActions(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: _QuickActionCard(
-            icon: Icons.analytics_outlined,
-            label: 'Run Audit',
-            color: AppColors.navy,
-            onTap: () => context.push(AppRoutes.audit),
+    return SizedBox(
+      height: 100,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          SizedBox(
+            width: 100,
+            child: _QuickActionCard(
+              icon: Icons.analytics_outlined,
+              label: 'Run Audit',
+              color: AppColors.navy,
+              onTap: () => context.push(AppRoutes.audit),
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _QuickActionCard(
-            icon: Icons.edit_note,
-            label: 'Create Post',
-            color: AppColors.orange,
-            onTap: () {},
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 100,
+            child: _QuickActionCard(
+              icon: Icons.edit_note,
+              label: 'Create Post',
+              color: AppColors.orange,
+              onTap: () {},
+            ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _QuickActionCard(
-            icon: Icons.star_outline,
-            label: 'Reviews',
-            color: AppColors.success,
-            onTap: () {},
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 100,
+            child: _QuickActionCard(
+              icon: Icons.star_outline,
+              label: 'Reviews',
+              color: AppColors.success,
+              onTap: () {},
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 100,
+            child: _QuickActionCard(
+              icon: Icons.search,
+              label: 'SEO Keywords',
+              color: AppColors.navy,
+              onTap: () => context.push(AppRoutes.keywords),
+            ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 100,
+            child: _QuickActionCard(
+              icon: Icons.people_outline,
+              label: 'Competitors',
+              color: AppColors.orange,
+              onTap: () => context.push(AppRoutes.competitors),
+            ),
+          ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 100,
+            child: _QuickActionCard(
+              icon: Icons.qr_code,
+              label: 'QR Review',
+              color: AppColors.success,
+              onTap: () => context.push(AppRoutes.qrReview),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
