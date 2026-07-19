@@ -30,7 +30,7 @@ class LoginScreen extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(flex: 2),
-              const PromoToLogo(size: 88),
+              const PromoToLogo(size: 110),
               const SizedBox(height: 8),
               Text(
                 'Grow your local business with\nAI-powered tools',
