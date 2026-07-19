@@ -39,10 +39,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
       floatingActionButton: hasBusiness
           ? FloatingActionButton.extended(
               onPressed: () => _showAddCustomerDialog(context),
-              backgroundColor: AppColors.navy,
-              icon: const Icon(Icons.person_add, color: AppColors.white),
-              label: const Text('Add Customer',
-                  style: TextStyle(color: AppColors.white)),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              icon: Icon(Icons.person_add, color: Theme.of(context).colorScheme.onPrimary),
+              label: Text('Add Customer',
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
             )
           : null,
       body: !hasBusiness
@@ -95,25 +95,25 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
             Expanded(
               child: Column(
                 children: [
-                  const Icon(Icons.people, color: AppColors.navy, size: 24),
+                  Icon(Icons.people, color: Theme.of(context).colorScheme.primary, size: 24),
                   const SizedBox(height: 4),
                   Text(
                     state.totalCustomers.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Total Customers',
                     style: TextStyle(
-                        fontSize: 12, color: AppColors.textSecondary),
+                        fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
                   ),
                 ],
               ),
             ),
-            Container(width: 1, height: 50, color: AppColors.border),
+            Container(width: 1, height: 50, color: Theme.of(context).dividerColor),
             Expanded(
               child: Column(
                 children: [
@@ -122,16 +122,16 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   const SizedBox(height: 4),
                   Text(
                     state.upcomingBirthdays.toString(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Upcoming Birthdays',
                     style: TextStyle(
-                        fontSize: 12, color: AppColors.textSecondary),
+                        fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
                   ),
                 ],
               ),
@@ -163,14 +163,14 @@ class _CustomerCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppColors.navy.withValues(alpha: 0.1),
+          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
           child: Text(
             customer.displayName.isNotEmpty
                 ? customer.displayName[0].toUpperCase()
                 : 'C',
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: AppColors.navy,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
@@ -212,8 +212,8 @@ class _CustomerCard extends StatelessWidget {
             ],
           ],
         ),
-        trailing: const Icon(Icons.chevron_right,
-            color: AppColors.textSecondary),
+        trailing: Icon(Icons.chevron_right,
+            color: Theme.of(context).textTheme.bodyMedium?.color),
       ),
     );
   }
@@ -248,9 +248,9 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -274,7 +274,7 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
                       width: 40,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: AppColors.border,
+                        color: Theme.of(context).dividerColor,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),

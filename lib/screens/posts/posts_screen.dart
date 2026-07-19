@@ -41,10 +41,10 @@ class _PostsScreenState extends ConsumerState<PostsScreen> {
       floatingActionButton: hasBusiness
           ? FloatingActionButton.extended(
               onPressed: () => _showCreatePostSheet(context),
-              backgroundColor: AppColors.navy,
-              icon: const Icon(Icons.add, color: AppColors.white),
-              label: const Text('Create Post',
-                  style: TextStyle(color: AppColors.white)),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              icon: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimary),
+              label: Text('Create Post',
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
             )
           : null,
       body: !hasBusiness
@@ -115,14 +115,14 @@ class _PostCard extends StatelessWidget {
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
                   height: 180,
-                  color: AppColors.border,
+                  color: Theme.of(context).dividerColor,
                   child: const Center(child: CircularProgressIndicator()),
                 ),
                 errorWidget: (context, url, error) => Container(
                   height: 180,
-                  color: AppColors.border,
-                  child: const Icon(Icons.image_not_supported_outlined,
-                      size: 40, color: AppColors.textSecondary),
+                  color: Theme.of(context).dividerColor,
+                  child: Icon(Icons.image_not_supported_outlined,
+                      size: 40, color: Theme.of(context).textTheme.bodyMedium?.color),
                 ),
               ),
             ),
@@ -133,15 +133,15 @@ class _PostCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    _buildPlatformChip(post.platform),
+                    _buildPlatformChip(context, post.platform),
                     const SizedBox(width: 8),
                     _buildStatusChip(post.status),
                     const Spacer(),
                     Text(
                       _formatDate(post.createdAt),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                     ),
                   ],
@@ -150,7 +150,7 @@ class _PostCard extends StatelessWidget {
                 Text(
                   post.caption,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                   maxLines: 4,
                   overflow: TextOverflow.ellipsis,
@@ -163,7 +163,7 @@ class _PostCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPlatformChip(String platform) {
+  Widget _buildPlatformChip(BuildContext context, String platform) {
     IconData icon;
     switch (platform) {
       case 'facebook':
@@ -176,16 +176,17 @@ class _PostCard extends StatelessWidget {
         icon = Icons.public;
     }
 
+    final primaryColor = Theme.of(context).colorScheme.primary;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.navy.withValues(alpha: 0.1),
+        color: primaryColor.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.navy),
+          Icon(icon, size: 14, color: primaryColor),
           const SizedBox(width: 4),
           Text(
             PostModel(
@@ -196,10 +197,10 @@ class _PostCard extends StatelessWidget {
               status: '',
               createdAt: DateTime.now(),
             ).platformDisplay,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w500,
-              color: AppColors.navy,
+              color: primaryColor,
             ),
           ),
         ],
@@ -364,9 +365,9 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.85,
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -381,7 +382,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppColors.border,
+                      color: Theme.of(context).dividerColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -415,15 +416,15 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   height: 120,
-                                  color: AppColors.border,
+                                  color: Theme.of(context).dividerColor,
                                   child: const Center(
                                       child: CircularProgressIndicator()),
                                 ),
                                 errorWidget: (context, url, error) => Container(
                                   height: 120,
-                                  color: AppColors.border,
-                                  child: const Icon(Icons.broken_image,
-                                      color: AppColors.textSecondary),
+                                  color: Theme.of(context).dividerColor,
+                                  child: Icon(Icons.broken_image,
+                                      color: Theme.of(context).textTheme.bodyMedium?.color),
                                 ),
                               ),
                       ),
@@ -434,12 +435,12 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                           onTap: _removeImage,
                           child: Container(
                             padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: AppColors.navy,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.close,
-                                size: 18, color: AppColors.white),
+                            child: Icon(Icons.close,
+                                size: 18, color: Theme.of(context).colorScheme.onPrimary),
                           ),
                         ),
                       ),
@@ -452,13 +453,13 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 6),
                             decoration: BoxDecoration(
-                              color: AppColors.navy,
+                              color: Theme.of(context).colorScheme.primary,
                               borderRadius: BorderRadius.circular(6),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Replace',
                               style: TextStyle(
-                                  color: AppColors.white, fontSize: 12),
+                                  color: Theme.of(context).colorScheme.onPrimary, fontSize: 12),
                             ),
                           ),
                         ),
@@ -472,18 +473,18 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                       height: 80,
                       width: double.infinity,
                       child: CustomPaint(
-                        painter: _DottedBorderPainter(color: AppColors.border),
-                        child: const Center(
+                        painter: _DottedBorderPainter(color: Theme.of(context).dividerColor),
+                        child: Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.add_photo_alternate_outlined,
-                                  size: 28, color: AppColors.textSecondary),
-                              SizedBox(width: 8),
+                                  size: 28, color: Theme.of(context).textTheme.bodyMedium?.color),
+                              const SizedBox(width: 8),
                               Text(
                                 'Tap to upload image',
                                 style: TextStyle(
-                                  color: AppColors.textSecondary,
+                                  color: Theme.of(context).textTheme.bodyMedium?.color,
                                   fontSize: 14,
                                 ),
                               ),
@@ -763,35 +764,41 @@ class _PlatformOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-          width: (MediaQuery.of(context).size.width - 80) / 4,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.navy.withValues(alpha: 0.1)
-                : AppColors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected ? AppColors.navy : AppColors.border,
-            ),
-          ),
-          child: Column(
-            children: [
-              Icon(icon,
-                  size: 20,
-                  color: isSelected ? AppColors.navy : AppColors.textSecondary),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? AppColors.navy : AppColors.textSecondary,
-                ),
+      child: Builder(
+        builder: (context) {
+          final primaryColor = Theme.of(context).colorScheme.primary;
+          final secondaryTextColor = Theme.of(context).textTheme.bodyMedium?.color;
+          return Container(
+            width: (MediaQuery.of(context).size.width - 80) / 4,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? primaryColor.withValues(alpha: 0.15)
+                  : Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: isSelected ? primaryColor : Theme.of(context).dividerColor,
               ),
-            ],
-          ),
-        ),
+            ),
+            child: Column(
+              children: [
+                Icon(icon,
+                    size: 20,
+                    color: isSelected ? primaryColor : secondaryTextColor),
+                const SizedBox(height: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    color: isSelected ? primaryColor : secondaryTextColor,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

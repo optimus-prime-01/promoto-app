@@ -103,7 +103,7 @@ class _AuditScreenState extends ConsumerState<AuditScreen> {
             Icon(
               Icons.analytics_outlined,
               size: 48,
-              color: AppColors.navy.withValues(alpha: 0.7),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
             ),
             const SizedBox(height: 12),
             Text(
@@ -155,7 +155,7 @@ class _AuditScreenState extends ConsumerState<AuditScreen> {
                   CircularProgressIndicator(
                     value: (audit.overallScore / 100).clamp(0.0, 1.0),
                     strokeWidth: 10,
-                    backgroundColor: AppColors.border,
+                    backgroundColor: Theme.of(context).dividerColor,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getScoreColor(audit.overallScore),
                     ),
@@ -163,10 +163,10 @@ class _AuditScreenState extends ConsumerState<AuditScreen> {
                   Center(
                     child: Text(
                       audit.overallScore.toInt().toString(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -238,7 +238,7 @@ class _AuditScreenState extends ConsumerState<AuditScreen> {
             child: LinearProgressIndicator(
               value: (score / 100).clamp(0.0, 1.0),
               minHeight: 8,
-              backgroundColor: AppColors.border,
+              backgroundColor: Theme.of(context).dividerColor,
               valueColor: AlwaysStoppedAnimation<Color>(
                 _getScoreColor(score),
               ),
@@ -369,7 +369,7 @@ class _SuggestionCardState extends State<_SuggestionCard> {
                   const Spacer(),
                   Icon(
                     _expanded ? Icons.expand_less : Icons.expand_more,
-                    color: AppColors.textSecondary,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                 ],
               ),
@@ -378,7 +378,7 @@ class _SuggestionCardState extends State<_SuggestionCard> {
                 Text(
                   widget.suggestion.text,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                 ),
               ],

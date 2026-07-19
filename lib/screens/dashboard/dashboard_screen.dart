@@ -121,7 +121,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   CircularProgressIndicator(
                     value: normalizedScore,
                     strokeWidth: 8,
-                    backgroundColor: AppColors.border,
+                    backgroundColor: Theme.of(context).dividerColor,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       score >= 70
                           ? AppColors.success
@@ -133,10 +133,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Center(
                     child: Text(
                       score.toInt().toString(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -272,9 +272,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: AppColors.textSecondary),
+          Icon(icon, size: 18, color: Theme.of(context).textTheme.bodyMedium?.color),
           const SizedBox(width: 8),
-          Text(text, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(text, style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
         ],
       ),
     );
@@ -312,10 +312,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppColors.navy.withValues(alpha: 0.1),
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: AppColors.navy, size: 20),
+          child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -364,7 +364,7 @@ class _QuickActionCard extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, color: color, size: 18),
@@ -375,10 +375,10 @@ class _QuickActionCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],

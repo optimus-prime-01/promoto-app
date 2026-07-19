@@ -268,8 +268,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 height: 8,
                 decoration: BoxDecoration(
                   color: _currentPage == index
-                      ? AppColors.navy
-                      : AppColors.border,
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).dividerColor,
                   borderRadius: BorderRadius.circular(4),
                 ),
               );
@@ -325,19 +325,19 @@ class _PlanCard extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: isCurrent
                     ? AppColors.orange
                     : plan.isPopular
-                        ? AppColors.navy
-                        : AppColors.border,
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).dividerColor,
                 width: isCurrent || plan.isPopular ? 2.0 : 1.0,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.navy.withValues(alpha: 0.08),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),
@@ -356,7 +356,7 @@ class _PlanCard extends StatelessWidget {
                     color: isCurrent
                         ? AppColors.orange.withValues(alpha: 0.06)
                         : plan.isPopular
-                            ? AppColors.navy.withValues(alpha: 0.04)
+                            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.04)
                             : Colors.transparent,
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(18),
@@ -366,39 +366,39 @@ class _PlanCard extends StatelessWidget {
                     children: [
                       Text(
                         plan.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.navy,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 8),
                       RichText(
                         text: TextSpan(
                           children: [
-                            const TextSpan(
+                            TextSpan(
                               text: 'Rs ',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             TextSpan(
                               text: plan.pricePerMonth.toString(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 36,
                                 fontWeight: FontWeight.w800,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                             ),
                             if (plan.pricePerMonth > 0)
-                              const TextSpan(
+                              TextSpan(
                                 text: '/mo',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
-                                  color: AppColors.textSecondary,
+                                  color: Theme.of(context).textTheme.bodyMedium?.color,
                                 ),
                               ),
                           ],
@@ -432,16 +432,16 @@ class _PlanCard extends StatelessWidget {
                         ? OutlinedButton(
                             onPressed: null,
                             style: OutlinedButton.styleFrom(
-                              side: const BorderSide(color: AppColors.border),
+                              side: BorderSide(color: Theme.of(context).dividerColor),
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Current Plan',
                               style: TextStyle(
-                                color: AppColors.textSecondary,
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -451,7 +451,7 @@ class _PlanCard extends StatelessWidget {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: plan.isPopular
                                   ? AppColors.orange
-                                  : AppColors.navy,
+                                  : Theme.of(context).colorScheme.primary,
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -534,7 +534,7 @@ class _FeatureRow extends StatelessWidget {
         Icon(
           feature.available ? Icons.check_circle : Icons.cancel,
           size: 18,
-          color: feature.available ? AppColors.success : AppColors.border,
+          color: feature.available ? AppColors.success : Theme.of(context).dividerColor,
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -543,18 +543,18 @@ class _FeatureRow extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               color: feature.available
-                  ? AppColors.textPrimary
-                  : AppColors.textSecondary,
+                  ? Theme.of(context).colorScheme.onSurface
+                  : Theme.of(context).textTheme.bodyMedium?.color,
             ),
           ),
         ),
         if (feature.value != null && feature.available)
           Text(
             feature.value!,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: AppColors.navy,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
       ],

@@ -47,15 +47,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 children: [
                   CircleAvatar(
                     radius: 30,
-                    backgroundColor: AppColors.navy.withValues(alpha: 0.1),
+                    backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                     child: Text(
                       authState.user?.name.isNotEmpty == true
                           ? authState.user!.name[0].toUpperCase()
                           : 'U',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.navy,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -302,11 +302,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
       ),
       value: value,
       onChanged: onChanged,
-      activeThumbColor: AppColors.navy,
+      activeTrackColor: AppColors.orange.withValues(alpha: 0.5),
+      activeThumbColor: AppColors.orange,
     );
   }
 
@@ -317,9 +318,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: AppColors.navy),
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
       title: Text(title),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textSecondary),
+      trailing: Icon(Icons.chevron_right, color: Theme.of(context).textTheme.bodyMedium?.color),
       onTap: onTap,
     );
   }

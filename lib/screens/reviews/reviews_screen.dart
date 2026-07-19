@@ -87,16 +87,16 @@ class _ReviewsScreenState extends ConsumerState<ReviewsScreen> {
                 iconColor: AppColors.orange,
               ),
             ),
-            Container(width: 1, height: 40, color: AppColors.border),
+            Container(width: 1, height: 40, color: Theme.of(context).dividerColor),
             Expanded(
               child: _StatItem(
                 label: 'Total',
                 value: state.totalReviews.toString(),
                 icon: Icons.reviews_outlined,
-                iconColor: AppColors.navy,
+                iconColor: Theme.of(context).colorScheme.primary,
               ),
             ),
-            Container(width: 1, height: 40, color: AppColors.border),
+            Container(width: 1, height: 40, color: Theme.of(context).dividerColor),
             Expanded(
               child: _StatItem(
                 label: 'Replied',
@@ -133,15 +133,15 @@ class _StatItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
         ),
       ],
     );
@@ -185,14 +185,14 @@ class _ReviewCardState extends ConsumerState<_ReviewCard> {
               children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: AppColors.navy.withValues(alpha: 0.1),
+                  backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.15),
                   child: Text(
                     review.reviewerName.isNotEmpty
                         ? review.reviewerName[0].toUpperCase()
                         : 'A',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.navy,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),
@@ -210,9 +210,9 @@ class _ReviewCardState extends ConsumerState<_ReviewCard> {
                       ),
                       Text(
                         _formatDate(review.createdAt),
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: AppColors.textSecondary,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                       ),
                     ],
@@ -226,7 +226,7 @@ class _ReviewCardState extends ConsumerState<_ReviewCard> {
               Text(
                 review.text!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
             ],
@@ -261,9 +261,9 @@ class _ReviewCardState extends ConsumerState<_ReviewCard> {
                     const SizedBox(height: 6),
                     Text(
                       review.replyText!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],
