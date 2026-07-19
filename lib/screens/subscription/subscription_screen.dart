@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 import '../../config/app_theme.dart';
 import '../../providers/subscription_provider.dart';
@@ -124,15 +124,63 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   void initState() {
     super.initState();
+    _initRazorpay();
     Future.microtask(() {
       ref.read(subscriptionProvider.notifier).fetchCurrentSubscription();
     });
   }
 
+  late Razorpay _razorpay;
+
   @override
   void dispose() {
     _pageController.dispose();
+    _razorpay.clear();
     super.dispose();
+  }
+
+  void _initRazorpay() {
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _onPaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _onPaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _onExternalWallet);
+  }
+
+  void _onPaymentSuccess(PaymentSuccessResponse response) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment successful. Plan upgraded.'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+      Navigator.of(context).pop();
+    }
+  }
+
+  void _onPaymentError(PaymentFailureResponse response) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Payment failed: ${response.message ?? 'Unknown error'}',
+          ),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  void _onExternalWallet(ExternalWalletResponse response) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'External wallet selected: ${response.walletName ?? ''}',
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _handleUpgrade(String planId) async {
@@ -141,19 +189,45 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         .createSubscription(planId);
 
     if (result != null && mounted) {
-      final paymentUrl = result['paymentUrl'] as String?;
-      if (paymentUrl != null && paymentUrl.isNotEmpty) {
-        final uri = Uri.parse(paymentUrl);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final subscriptionId =
+          result['razorpaySubscriptionId'] as String?;
+
+      if (subscriptionId != null && subscriptionId.isNotEmpty) {
+        final options = {
+          'key': 'rzp_test_TFGwQAfNMSxrNC',
+          'subscription_id': subscriptionId,
+          'name': 'Promoto',
+          'description': 'Promoto ${planId[0].toUpperCase()}${planId.substring(1)} Plan',
+          'prefill': {
+            'email': 'test@promoto.com',
+            'contact': '9835255787',
+          },
+          'theme': {
+            'color': '#1E3C78',
+          },
+        };
+
+        try {
+          _razorpay.open(options);
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Could not open payment: $e'),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Subscription updated successfully'),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Subscription updated successfully'),
+              backgroundColor: AppColors.success,
+            ),
+          );
+        }
       }
     } else if (mounted) {
       final error = ref.read(subscriptionProvider).error;
