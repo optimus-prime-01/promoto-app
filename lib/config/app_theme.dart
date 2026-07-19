@@ -20,12 +20,12 @@ class AppColors {
   static const Color success = Color(0xFF16A34A);
 
   // Dark theme colors
-  static const Color darkBackground = Color(0xFF0F172A);
-  static const Color darkSurface = Color(0xFF1E293B);
-  static const Color darkCard = Color(0xFF1E293B);
-  static const Color darkTextPrimary = Color(0xFFF1F5F9);
-  static const Color darkTextSecondary = Color(0xFF94A3B8);
-  static const Color darkBorder = Color(0xFF334155);
+  static const Color darkBackground = Color(0xFF121212);
+  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkCard = Color(0xFF252525);
+  static const Color darkTextPrimary = Color(0xFFEEEEEE);
+  static const Color darkTextSecondary = Color(0xFF9E9E9E);
+  static const Color darkBorder = Color(0xFF383838);
 }
 
 class AppTheme {
