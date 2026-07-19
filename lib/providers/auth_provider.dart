@@ -75,6 +75,26 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> devLogin() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final user = await _authService.devLogin();
+      if (user != null) {
+        state = AuthState(isLoggedIn: true, user: user, isLoading: false);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Dev login failed. Is backend running?',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Dev login failed: $e',
+      );
+    }
+  }
+
   Future<void> sendPhoneOtp(String phoneNumber) async {
     await _authService.sendPhoneOtp(phoneNumber);
   }

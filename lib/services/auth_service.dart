@@ -74,6 +74,28 @@ class AuthService {
     }
   }
 
+  // Dev mode login - bypasses Firebase, uses test JWT directly
+  Future<UserModel?> devLogin() async {
+    try {
+      final response = await _apiService.post(
+        '/auth/dev-login',
+        data: {
+          'email': 'test@promoto.com',
+          'name': 'Test User',
+        },
+      );
+
+      final data = response.data as Map<String, dynamic>;
+      final token = data['accessToken'] as String;
+      await _storageService.saveToken(token);
+
+      return UserModel.fromJson(data['user'] as Map<String, dynamic>);
+    } catch (e) {
+      debugPrint('Dev login failed: $e');
+      return null;
+    }
+  }
+
   String? _verificationId;
 
   Future<void> sendPhoneOtp(String phoneNumber) async {

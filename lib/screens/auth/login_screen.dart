@@ -95,7 +95,20 @@ class LoginScreen extends ConsumerWidget {
                   );
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
+              // Dev mode - remove before production
+              TextButton(
+                onPressed: () async {
+                  await ref
+                      .read(authProvider.notifier)
+                      .devLogin();
+                },
+                child: const Text(
+                  '[DEV] Skip Login',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+              ),
+              const SizedBox(height: 8),
               Text(
                 'By signing in, you agree to our\nTerms of Service and Privacy Policy',
                 textAlign: TextAlign.center,

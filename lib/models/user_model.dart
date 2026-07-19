@@ -4,7 +4,8 @@ class UserModel {
   final String name;
   final String? photoUrl;
   final String? phone;
-  final DateTime createdAt;
+  final String? role;
+  final DateTime? createdAt;
 
   const UserModel({
     required this.id,
@@ -12,17 +13,21 @@ class UserModel {
     required this.name,
     this.photoUrl,
     this.phone,
-    required this.createdAt,
+    this.role,
+    this.createdAt,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] as String,
-      email: json['email'] as String,
-      name: json['name'] as String,
+      id: json['id'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      name: json['name'] as String? ?? '',
       photoUrl: json['photoUrl'] as String?,
       phone: json['phone'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      role: json['role'] as String?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt'] as String)
+          : null,
     );
   }
 
@@ -33,7 +38,8 @@ class UserModel {
       'name': name,
       'photoUrl': photoUrl,
       'phone': phone,
-      'createdAt': createdAt.toIso8601String(),
+      'role': role,
+      'createdAt': createdAt?.toIso8601String(),
     };
   }
 }

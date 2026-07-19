@@ -1,9 +1,9 @@
 class ApiConfig {
   ApiConfig._();
 
-  // Use 10.0.2.2 for Android emulator (maps to host localhost)
+  // localhost works with adb reverse tcp:3000 tcp:3000
   // Change to actual server URL for production
-  static const String baseUrl = 'http://10.0.2.2:3000/api/v1';
+  static const String baseUrl = 'http://localhost:3000/api/v1';
 
   // Auth
   static const String login = '/auth/login';
