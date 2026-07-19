@@ -169,12 +169,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Widget _buildQuickActions(BuildContext context) {
     return SizedBox(
-      height: 100,
+      height: 90,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
           SizedBox(
-            width: 100,
+            width: 85,
             child: _QuickActionCard(
               icon: Icons.analytics_outlined,
               label: 'Run Audit',
@@ -184,7 +184,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            width: 100,
+            width: 85,
             child: _QuickActionCard(
               icon: Icons.edit_note,
               label: 'Create Post',
@@ -194,7 +194,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            width: 100,
+            width: 85,
             child: _QuickActionCard(
               icon: Icons.star_outline,
               label: 'Reviews',
@@ -204,7 +204,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            width: 100,
+            width: 85,
             child: _QuickActionCard(
               icon: Icons.search,
               label: 'SEO Keywords',
@@ -214,7 +214,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            width: 100,
+            width: 85,
             child: _QuickActionCard(
               icon: Icons.people_outline,
               label: 'Competitors',
@@ -224,7 +224,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
           const SizedBox(width: 10),
           SizedBox(
-            width: 100,
+            width: 85,
             child: _QuickActionCard(
               icon: Icons.qr_code,
               label: 'QR Review',
@@ -355,26 +355,30 @@ class _QuickActionCard extends StatelessWidget {
       onTap: onTap,
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 6),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(icon, color: color, size: 22),
+                child: Icon(icon, color: color, size: 18),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 6),
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textPrimary,
-                    ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
