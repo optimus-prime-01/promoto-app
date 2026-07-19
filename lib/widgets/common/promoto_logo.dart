@@ -15,9 +15,6 @@ class PromoToLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = darkBackground ||
-        Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -25,30 +22,24 @@ class PromoToLogo extends StatelessWidget {
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: isDark ? AppColors.white : AppColors.navy,
+            color: darkBackground ? AppColors.white : AppColors.white,
             borderRadius: BorderRadius.circular(size * 0.24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
-          padding: EdgeInsets.all(size * 0.15),
-          child: ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              isDark ? AppColors.navy : AppColors.white,
-              BlendMode.srcIn,
-            ),
-            child: Image.asset(
-              'assets/images/logo.png',
-              fit: BoxFit.contain,
-            ),
+          padding: EdgeInsets.all(size * 0.12),
+          child: Image.asset(
+            'assets/images/logo.png',
+            fit: BoxFit.contain,
           ),
         ),
         if (showText) ...[
-          SizedBox(height: size * 0.2),
+          SizedBox(height: size * 0.18),
           RichText(
             text: TextSpan(
               children: [
@@ -57,7 +48,9 @@ class PromoToLogo extends StatelessWidget {
                   style: TextStyle(
                     fontSize: size * 0.3,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? AppColors.white : AppColors.navy,
+                    color: darkBackground
+                        ? AppColors.white
+                        : AppColors.navy,
                     fontFamily: 'Poppins',
                     letterSpacing: -0.5,
                   ),

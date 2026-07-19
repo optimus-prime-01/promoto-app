@@ -157,16 +157,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.all(18),
-                child: const ColorFiltered(
-                  colorFilter: ColorFilter.mode(
-                    AppColors.navy,
-                    BlendMode.srcIn,
-                  ),
-                  child: Image(
-                    image: AssetImage('assets/images/logo.png'),
-                    fit: BoxFit.contain,
-                  ),
+                padding: const EdgeInsets.all(16),
+                child: Image.asset(
+                  'assets/images/logo.png',
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
