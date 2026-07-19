@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../config/app_theme.dart';
 import '../../config/routes.dart';
@@ -201,6 +202,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Other options
           _buildMenuItem(
             context,
+            icon: Icons.edit_outlined,
+            title: 'Edit Business',
+            onTap: () => context.push(AppRoutes.editBusiness),
+          ),
+          _buildMenuItem(
+            context,
+            icon: Icons.share_outlined,
+            title: 'Share Promoto',
+            onTap: () {
+              Share.share(
+                'Try Promoto - AI Marketing for your local business. Download now: https://promoto.com',
+              );
+            },
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.credit_card_outlined,
             title: 'Subscription',
             onTap: () => context.push(AppRoutes.subscription),
@@ -268,6 +285,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
           const SizedBox(height: 24),
 
+          // Delete Account
+          ListTile(
+            leading: const Icon(Icons.delete_forever, color: AppColors.error),
+            title: const Text(
+              'Delete Account',
+              style: TextStyle(color: AppColors.error),
+            ),
+            onTap: () => _showDeleteAccountDialog(context, ref),
+          ),
+
           // Sign out
           ListTile(
             leading: const Icon(Icons.logout, color: AppColors.error),
@@ -286,6 +313,46 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _showDeleteAccountDialog(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Account'),
+        content: const Text(
+          'Are you sure? This will permanently delete your account and all data.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        final apiService = ref.read(apiServiceProvider);
+        await apiService.delete('/users/me');
+        await ref.read(authProvider.notifier).signOut();
+        if (context.mounted) {
+          context.go(AppRoutes.login);
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to delete account')),
+          );
+        }
+      }
+    }
   }
 
   Widget _buildToggle(

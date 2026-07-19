@@ -37,6 +37,9 @@ dependencies:
   cached_network_image: ^3.4.1
   flutter_svg: ^2.0.17
 
+  # Connectivity
+  connectivity_plus: ^6.1.4
+
   # Utilities
   image_picker: ^1.1.2
   url_launcher: ^6.3.1

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../config/app_theme.dart';
 import '../../providers/tab_provider.dart';
+import '../../widgets/common/connectivity_banner.dart';
 import '../dashboard/dashboard_screen.dart';
 import '../reviews/reviews_screen.dart';
 import '../posts/posts_screen.dart';
@@ -25,9 +26,16 @@ class HomeScreen extends ConsumerWidget {
     final currentIndex = ref.watch(tabIndexProvider);
 
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: _screens,
+      body: Column(
+        children: [
+          const ConnectivityBanner(),
+          Expanded(
+            child: IndexedStack(
+              index: currentIndex,
+              children: _screens,
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
