@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../config/app_theme.dart';
 import '../../models/post_model.dart';
@@ -264,9 +267,12 @@ class _CreatePostSheet extends ConsumerStatefulWidget {
 class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
   final _topicController = TextEditingController();
   final _captionController = TextEditingController();
+  final _imagePicker = ImagePicker();
   String _selectedPlatform = 'both';
   String? _generatedImageUrl;
+  File? _pickedImageFile;
   bool _isSaving = false;
+  bool _isGeneratingCaption = false;
 
   @override
   void dispose() {
@@ -275,16 +281,86 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Gallery'),
+              onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt_outlined),
+              title: const Text('Camera'),
+              onTap: () => Navigator.pop(ctx, ImageSource.camera),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final picked = await _imagePicker.pickImage(
+      source: source,
+      maxWidth: 1080,
+      maxHeight: 1080,
+      imageQuality: 85,
+    );
+
+    if (picked != null) {
+      setState(() {
+        _pickedImageFile = File(picked.path);
+        _generatedImageUrl = null;
+      });
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _pickedImageFile = null;
+      _generatedImageUrl = null;
+    });
+  }
+
+  Future<void> _generateAiCaption() async {
+    final business = ref.read(businessProvider).currentBusiness;
+    if (business == null) return;
+
+    final topic = '${business.name} ${business.category ?? ''}'.trim();
+
+    setState(() => _isGeneratingCaption = true);
+
+    await ref.read(postsProvider.notifier).generatePost(topic);
+
+    if (mounted) {
+      final postsState = ref.read(postsProvider);
+      if (postsState.generatedCaption != null) {
+        _captionController.text = postsState.generatedCaption!;
+      }
+      setState(() => _isGeneratingCaption = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final postsState = ref.watch(postsProvider);
 
-    // Update caption from generated content
+    // Update caption and image from AI-generated content
     if (postsState.generatedCaption != null &&
-        _captionController.text.isEmpty) {
+        _captionController.text.isEmpty &&
+        !_isGeneratingCaption) {
       _captionController.text = postsState.generatedCaption!;
-      _generatedImageUrl = postsState.generatedImageUrl;
+      if (postsState.generatedImageUrl != null && _pickedImageFile == null) {
+        _generatedImageUrl = postsState.generatedImageUrl;
+      }
     }
+
+    final bool hasUserImage = _pickedImageFile != null;
+    final bool hasAnyImage = hasUserImage || _generatedImageUrl != null;
 
     return Container(
       decoration: const BoxDecoration(
@@ -322,6 +398,110 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 24),
+
+                // Image Section
+                Text('Image', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                if (hasAnyImage)
+                  Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: hasUserImage
+                            ? Image.file(
+                                _pickedImageFile!,
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: _generatedImageUrl!,
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  height: 200,
+                                  color: AppColors.border,
+                                  child: const Center(
+                                      child: CircularProgressIndicator()),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  height: 200,
+                                  color: AppColors.border,
+                                  child: const Icon(Icons.broken_image,
+                                      color: AppColors.textSecondary),
+                                ),
+                              ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: _removeImage,
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: AppColors.navy,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.close,
+                                size: 18, color: AppColors.white),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: GestureDetector(
+                          onTap: _pickImage,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.navy,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'Replace',
+                              style: TextStyle(
+                                  color: AppColors.white, fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: SizedBox(
+                      height: 160,
+                      width: double.infinity,
+                      child: CustomPaint(
+                        painter: _DottedBorderPainter(color: AppColors.border),
+                        child: const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_photo_alternate_outlined,
+                                  size: 40, color: AppColors.textSecondary),
+                              SizedBox(height: 8),
+                              Text(
+                                'Tap to upload image',
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 20),
+
+                // Topic field with AI button
                 Text('Topic', style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Row(
@@ -352,7 +532,7 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 14),
                       ),
-                      child: postsState.isGenerating
+                      child: postsState.isGenerating && !_isGeneratingCaption
                           ? const SizedBox(
                               height: 18,
                               width: 18,
@@ -376,6 +556,8 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
+
+                // Caption field
                 Text('Caption',
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
@@ -386,34 +568,35 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                     hintText: 'Write your post caption...',
                   ),
                 ),
-                if (_generatedImageUrl != null) ...[
-                  const SizedBox(height: 16),
-                  Text('Generated Image',
-                      style: Theme.of(context).textTheme.titleMedium),
+                if (hasUserImage) ...[
                   const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: CachedNetworkImage(
-                      imageUrl: _generatedImageUrl!,
-                      height: 180,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        height: 180,
-                        color: AppColors.border,
-                        child:
-                            const Center(child: CircularProgressIndicator()),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TextButton.icon(
+                      onPressed:
+                          _isGeneratingCaption ? null : _generateAiCaption,
+                      icon: _isGeneratingCaption
+                          ? const SizedBox(
+                              height: 14,
+                              width: 14,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.auto_awesome, size: 16),
+                      label: Text(
+                        _isGeneratingCaption
+                            ? 'Generating...'
+                            : 'AI Caption',
                       ),
-                      errorWidget: (context, url, error) => Container(
-                        height: 180,
-                        color: AppColors.border,
-                        child: const Icon(Icons.broken_image,
-                            color: AppColors.textSecondary),
+                      style: TextButton.styleFrom(
+                        foregroundColor: AppColors.orange,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
                       ),
                     ),
                   ),
                 ],
                 const SizedBox(height: 20),
+
+                // Platform selector
                 Text('Platform',
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
@@ -445,6 +628,8 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                   ],
                 ),
                 const SizedBox(height: 24),
+
+                // Save Draft / Publish buttons
                 Row(
                   children: [
                     Expanded(
@@ -521,6 +706,45 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
       }
     }
   }
+}
+
+class _DottedBorderPainter extends CustomPainter {
+  final Color color;
+
+  _DottedBorderPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.5
+      ..style = PaintingStyle.stroke;
+
+    const dashWidth = 6.0;
+    const dashSpace = 4.0;
+    final rRect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      const Radius.circular(12),
+    );
+
+    final path = Path()..addRRect(rRect);
+    final metrics = path.computeMetrics();
+
+    for (final metric in metrics) {
+      double distance = 0;
+      while (distance < metric.length) {
+        final end = distance + dashWidth;
+        canvas.drawPath(
+          metric.extractPath(distance, end.clamp(0, metric.length)),
+          paint,
+        );
+        distance += dashWidth + dashSpace;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 class _PlatformOption extends StatelessWidget {

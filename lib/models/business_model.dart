@@ -36,7 +36,7 @@ class BusinessModel {
       address: json['address'] as String?,
       website: json['website'] as String?,
       logoUrl: json['logoUrl'] as String?,
-      profileScore: (json['profileScore'] as num?)?.toDouble() ?? 0,
+      profileScore: double.tryParse(json['profileScore']?.toString() ?? '0') ?? 0,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
           : DateTime.now(),

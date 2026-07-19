@@ -26,6 +26,20 @@ class AuditModel {
   factory AuditModel.fromJson(Map<String, dynamic> json) {
     List<AuditSuggestion> parseSuggestions(dynamic raw) {
       if (raw == null) return [];
+      if (raw is Map<String, dynamic>) {
+        final result = <AuditSuggestion>[];
+        raw.forEach((category, items) {
+          if (items is List) {
+            for (final item in items) {
+              result.add(AuditSuggestion(
+                category: category,
+                text: item.toString(),
+              ));
+            }
+          }
+        });
+        return result;
+      }
       if (raw is List) {
         return raw.map((e) {
           if (e is Map<String, dynamic>) {
@@ -40,12 +54,12 @@ class AuditModel {
     return AuditModel(
       id: json['id'] as String,
       businessId: json['businessId'] as String,
-      overallScore: (json['overallScore'] as num?)?.toDouble() ?? 0,
-      completenessScore: (json['completenessScore'] as num?)?.toDouble() ?? 0,
-      reviewScore: (json['reviewScore'] as num?)?.toDouble() ?? 0,
-      postScore: (json['postScore'] as num?)?.toDouble() ?? 0,
-      responseScore: (json['responseScore'] as num?)?.toDouble() ?? 0,
-      keywordScore: (json['keywordScore'] as num?)?.toDouble() ?? 0,
+      overallScore: double.tryParse(json['overallScore']?.toString() ?? '0') ?? 0,
+      completenessScore: double.tryParse(json['completenessScore']?.toString() ?? '0') ?? 0,
+      reviewScore: double.tryParse(json['reviewScore']?.toString() ?? '0') ?? 0,
+      postScore: double.tryParse(json['postScore']?.toString() ?? '0') ?? 0,
+      responseScore: double.tryParse(json['responseScore']?.toString() ?? '0') ?? 0,
+      keywordScore: double.tryParse(json['keywordScore']?.toString() ?? '0') ?? 0,
       suggestions: parseSuggestions(json['suggestions']),
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'] as String)
