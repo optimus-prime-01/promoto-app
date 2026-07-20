@@ -80,13 +80,11 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                     platformName: 'Facebook',
                     icon: Icons.facebook,
                     color: const Color(0xFF1877F2),
-                    connectedAccount: _getFacebookAccount(state),
-                    onConnect: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Facebook connection coming soon'),
-                        ),
-                      );
+                    connectedAccount: state.getFacebookAccount(),
+                    onConnect: () async {
+                      await ref
+                          .read(socialAccountsProvider.notifier)
+                          .connectFacebook();
                     },
                     onDisconnect: (id) async {
                       final confirmed = await _showDisconnectDialog(context);
@@ -97,6 +95,11 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
                       }
                     },
                   ),
+
+                  const SizedBox(height: 16),
+
+                  // WhatsApp section
+                  _buildWhatsappSection(context),
 
                   const SizedBox(height: 24),
 
@@ -245,14 +248,87 @@ class _SocialAccountsScreenState extends ConsumerState<SocialAccountsScreen> {
     );
   }
 
-  dynamic _getFacebookAccount(SocialAccountsState state) {
-    try {
-      return state.accounts.firstWhere(
-        (a) => a.platform == 'facebook' && a.isConnected,
-      );
-    } catch (_) {
-      return null;
-    }
+  Widget _buildWhatsappSection(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF25D366).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.chat_outlined,
+                    color: Color(0xFF25D366),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'WhatsApp',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Requires Business Verification',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color:
+                              Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF25D366).withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: const Color(0xFF25D366).withValues(alpha: 0.2),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.info_outline,
+                    size: 18,
+                    color: Color(0xFF25D366),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'WhatsApp Business API requires business verification through Meta. Contact support for setup assistance.',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<bool?> _showDisconnectDialog(BuildContext context) {

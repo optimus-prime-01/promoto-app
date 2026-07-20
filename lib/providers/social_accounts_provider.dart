@@ -40,6 +40,18 @@ class SocialAccountsState {
   }
 
   bool get isInstagramConnected => getInstagramAccount() != null;
+
+  SocialAccountModel? getFacebookAccount() {
+    try {
+      return accounts.firstWhere(
+        (a) => a.platform == 'facebook' && a.isConnected,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  bool get isFacebookConnected => getFacebookAccount() != null;
 }
 
 class SocialAccountsNotifier extends StateNotifier<SocialAccountsState> {
@@ -101,6 +113,44 @@ class SocialAccountsNotifier extends StateNotifier<SocialAccountsState> {
     } catch (e) {
       state = state.copyWith(error: 'Failed to start Instagram connection');
       return false;
+    }
+  }
+
+  Future<bool> connectFacebook([String? businessId]) async {
+    final bid = businessId ?? _businessId;
+    if (bid == null) return false;
+
+    try {
+      final response = await _apiService
+          .post('/businesses/$bid/social-accounts/facebook/connect');
+      final data = response.data as Map<String, dynamic>;
+      final authUrl = data['authUrl'] as String?;
+
+      if (authUrl != null && authUrl.isNotEmpty) {
+        final uri = Uri.parse(authUrl);
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      state = state.copyWith(error: 'Failed to start Facebook connection');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>?> checkWhatsappStatus([
+    String? businessId,
+  ]) async {
+    final bid = businessId ?? _businessId;
+    if (bid == null) return null;
+
+    try {
+      final response = await _apiService
+          .post('/businesses/$bid/social-accounts/whatsapp/status');
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      state = state.copyWith(error: 'Failed to check WhatsApp status');
+      return null;
     }
   }
 
