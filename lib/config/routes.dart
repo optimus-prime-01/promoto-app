@@ -17,6 +17,8 @@ import '../screens/about/about_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/business/edit_business_screen.dart';
 import '../screens/social_accounts/social_accounts_screen.dart';
+import '../screens/scheduled_posts/scheduled_posts_screen.dart';
+import '../screens/comments/comments_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -35,6 +37,8 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String editBusiness = '/edit-business';
   static const String socialAccounts = '/social-accounts';
+  static const String scheduledPosts = '/scheduled-posts';
+  static const String comments = '/comments';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -125,6 +129,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.socialAccounts,
         builder: (context, state) => const SocialAccountsScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.scheduledPosts,
+        builder: (context, state) {
+          final platform =
+              state.uri.queryParameters['platform'];
+          return ScheduledPostsScreen(platformFilter: platform);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.comments,
+        builder: (context, state) => const CommentsScreen(),
       ),
     ],
   );

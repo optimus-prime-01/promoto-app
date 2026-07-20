@@ -240,6 +240,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               onTap: () => context.push(AppRoutes.qrReview),
             ),
           ),
+          const SizedBox(width: 10),
+          SizedBox(
+            width: 85,
+            child: _QuickActionCard(
+              icon: Icons.chat_bubble_outline,
+              label: 'Comments',
+              color: AppColors.navy,
+              onTap: () => context.push(AppRoutes.comments),
+            ),
+          ),
         ],
       ),
     );
@@ -254,7 +264,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             platformName: 'WhatsApp',
             color: const Color(0xFF25D366),
             onTap: () {
-              // Open WhatsApp scheduled posts
+              context.push('${AppRoutes.scheduledPosts}?platform=both');
             },
           ),
         ),
@@ -265,7 +275,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             platformName: 'Instagram',
             color: const Color(0xFFE1306C),
             onTap: () {
-              ref.read(tabIndexProvider.notifier).state = 2;
+              context.push('${AppRoutes.scheduledPosts}?platform=instagram');
             },
           ),
         ),
@@ -276,7 +286,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             platformName: 'Facebook',
             color: const Color(0xFF1877F2),
             onTap: () {
-              ref.read(tabIndexProvider.notifier).state = 2;
+              context.push('${AppRoutes.scheduledPosts}?platform=facebook');
             },
           ),
         ),
