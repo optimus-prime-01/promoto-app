@@ -90,9 +90,17 @@ class _WhatsappSchedulerScreenState
         _QuickActionCard(
           icon: Icons.cake_outlined,
           title: 'Birthday Wishes',
-          subtitle: 'Auto-wish customers on their birthday',
+          subtitle: 'View upcoming birthday wishes below',
           color: AppColors.orange,
-          onTap: () => context.push(AppRoutes.whatsappSettings),
+          onTap: () {
+            // Scroll down to birthday section
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Upcoming birthday wishes are shown below'),
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
         ),
         const SizedBox(height: 10),
         _QuickActionCard(
