@@ -136,11 +136,13 @@ class _AuditScreenState extends ConsumerState<AuditScreen> {
   }
 
   Widget _buildScoreOverview(BuildContext context, AuditModel audit) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
+    return SizedBox(
+      width: double.infinity,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
             Text(
               'Overall Score',
               style: Theme.of(context).textTheme.titleMedium,
@@ -182,7 +184,8 @@ class _AuditScreenState extends ConsumerState<AuditScreen> {
                 color: _getScoreColor(audit.overallScore),
               ),
             ),
-          ],
+            ],
+          ),
         ),
       ),
     );
