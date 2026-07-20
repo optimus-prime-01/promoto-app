@@ -104,9 +104,7 @@ class CustomersNotifier extends StateNotifier<CustomersState> {
   Future<bool> addCustomer({
     required String phone,
     String? name,
-    String? email,
-    String? notes,
-    List<String>? tags,
+    String? dateOfBirth,
   }) async {
     final bid = _businessId;
     if (bid == null) return false;
@@ -114,9 +112,7 @@ class CustomersNotifier extends StateNotifier<CustomersState> {
     try {
       final body = <String, dynamic>{'phone': phone};
       if (name != null && name.isNotEmpty) body['name'] = name;
-      if (email != null && email.isNotEmpty) body['email'] = email;
-      if (notes != null && notes.isNotEmpty) body['notes'] = notes;
-      if (tags != null && tags.isNotEmpty) body['tags'] = tags;
+      if (dateOfBirth != null) body['dateOfBirth'] = dateOfBirth;
 
       await _apiService.post('/businesses/$bid/customers', data: body);
       await fetchCustomers();

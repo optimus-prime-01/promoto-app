@@ -231,29 +231,22 @@ class _CustomerCard extends StatelessWidget {
               customer.phone,
               style: const TextStyle(fontSize: 13),
             ),
-            if (customer.tags.isNotEmpty) ...[
-              const SizedBox(height: 4),
-              Wrap(
-                spacing: 4,
-                children: customer.tags
-                    .take(3)
-                    .map((tag) => Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.orange.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            tag,
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: AppColors.orange,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ))
-                    .toList(),
+            if (customer.dateOfBirth != null) ...[
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  Icon(Icons.cake_outlined,
+                      size: 12,
+                      color: AppColors.orange),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${customer.dateOfBirth!.day}/${customer.dateOfBirth!.month}/${customer.dateOfBirth!.year}',
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.orange,
+                    ),
+                  ),
+                ],
               ),
             ],
           ],
@@ -276,18 +269,14 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _notesController = TextEditingController();
-  final _tagsController = TextEditingController();
+  DateTime? _selectedBirthday;
   bool _isSaving = false;
+  String? _duplicateError;
 
   @override
   void dispose() {
     _phoneController.dispose();
     _nameController.dispose();
-    _emailController.dispose();
-    _notesController.dispose();
-    _tagsController.dispose();
     super.dispose();
   }
 
@@ -331,6 +320,24 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 24),
+                  if (_duplicateError != null) ...[
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.orange.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        _duplicateError!,
+                        style: const TextStyle(
+                          color: AppColors.orange,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   AppTextField(
                     label: 'Phone (required)',
                     hint: 'Enter customer phone number',
@@ -350,24 +357,39 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
                     controller: _nameController,
                   ),
                   const SizedBox(height: 16),
-                  AppTextField(
-                    label: 'Email',
-                    hint: 'Enter customer email',
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 16),
-                  AppTextField(
-                    label: 'Notes',
-                    hint: 'Any notes about this customer',
-                    controller: _notesController,
-                    maxLines: 2,
-                  ),
-                  const SizedBox(height: 16),
-                  AppTextField(
-                    label: 'Tags (comma-separated)',
-                    hint: 'e.g. VIP, Regular, New',
-                    controller: _tagsController,
+                  GestureDetector(
+                    onTap: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime(2000, 1, 1),
+                        firstDate: DateTime(1950),
+                        lastDate: DateTime.now(),
+                        helpText: 'Select birthday',
+                      );
+                      if (date != null) {
+                        setState(() => _selectedBirthday = date);
+                      }
+                    },
+                    child: InputDecorator(
+                      decoration: InputDecoration(
+                        labelText: 'Birthday',
+                        hintText: 'Select birthday',
+                        prefixIcon: const Icon(Icons.cake_outlined, size: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        _selectedBirthday != null
+                            ? '${_selectedBirthday!.day}/${_selectedBirthday!.month}/${_selectedBirthday!.year}'
+                            : 'Tap to select',
+                        style: TextStyle(
+                          color: _selectedBirthday != null
+                              ? Theme.of(context).colorScheme.onSurface
+                              : Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   AppButton(
@@ -389,28 +411,17 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
   Future<void> _saveCustomer() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isSaving = true);
-
-    final tags = _tagsController.text.trim().isNotEmpty
-        ? _tagsController.text
-            .split(',')
-            .map((t) => t.trim())
-            .where((t) => t.isNotEmpty)
-            .toList()
-        : null;
+    setState(() {
+      _isSaving = true;
+      _duplicateError = null;
+    });
 
     final success = await ref.read(customersProvider.notifier).addCustomer(
           phone: _phoneController.text.trim(),
           name: _nameController.text.trim().isNotEmpty
               ? _nameController.text.trim()
               : null,
-          email: _emailController.text.trim().isNotEmpty
-              ? _emailController.text.trim()
-              : null,
-          notes: _notesController.text.trim().isNotEmpty
-              ? _notesController.text.trim()
-              : null,
-          tags: tags,
+          dateOfBirth: _selectedBirthday?.toIso8601String(),
         );
 
     if (mounted) {
@@ -421,9 +432,10 @@ class _AddCustomerSheetState extends ConsumerState<_AddCustomerSheet> {
           const SnackBar(content: Text('Customer added successfully')),
         );
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add customer')),
-        );
+        setState(() {
+          _duplicateError =
+              'Customer with this phone number already registered';
+        });
       }
     }
   }
