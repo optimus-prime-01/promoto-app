@@ -80,6 +80,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildScoreCard(context, businessState),
+                    const SizedBox(height: 16),
+                    _buildConnectAccountsCard(context),
                     const SizedBox(height: 24),
                     Text(
                       'Quick Actions',
@@ -107,6 +109,65 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildConnectAccountsCard(BuildContext context) {
+    return Card(
+      color: AppColors.orange.withValues(alpha: 0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(
+          color: AppColors.orange.withValues(alpha: 0.3),
+        ),
+      ),
+      child: InkWell(
+        onTap: () => context.push(AppRoutes.socialAccounts),
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.orange.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.link,
+                  color: AppColors.orange,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Connect Your Accounts',
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Link Instagram, Facebook & WhatsApp to post automatically',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right,
+                color: AppColors.orange,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
