@@ -30,30 +30,30 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 2500),
     );
 
-    // Blur to clear (10 -> 0)
-    _blurAnimation = Tween<double>(begin: 15.0, end: 0.0).animate(
+    // Blur to clear (8 -> 0, slow and gentle)
+    _blurAnimation = Tween<double>(begin: 8.0, end: 0.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+        curve: const Interval(0.1, 0.8, curve: Curves.easeOutCubic),
       ),
     );
 
-    // Fade in (0 -> 1)
+    // Fade in (0 -> 1, slow)
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+        curve: const Interval(0.0, 0.6, curve: Curves.easeInOut),
       ),
     );
 
-    // Scale (0.8 -> 1)
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+    // Scale (0.95 -> 1, subtle)
+    _scaleAnimation = Tween<double>(begin: 0.95, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: const Interval(0.0, 0.7, curve: Curves.easeOutBack),
+        curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
       ),
     );
 
