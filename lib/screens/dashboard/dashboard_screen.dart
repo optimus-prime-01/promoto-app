@@ -88,6 +88,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     const SizedBox(height: 12),
                     _buildQuickActions(context),
                     const SizedBox(height: 24),
+                    Text(
+                      'Scheduled Posts',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildScheduledPosts(context),
+                    const SizedBox(height: 24),
                     _buildBusinessInfo(context, businessState),
                     const SizedBox(height: 24),
                     Text(
@@ -238,6 +245,45 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
+  Widget _buildScheduledPosts(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: _SchedulerCard(
+            icon: Icons.chat,
+            platformName: 'WhatsApp',
+            color: const Color(0xFF25D366),
+            onTap: () {
+              // Open WhatsApp scheduled posts
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _SchedulerCard(
+            icon: Icons.camera_alt_outlined,
+            platformName: 'Instagram',
+            color: const Color(0xFFE1306C),
+            onTap: () {
+              ref.read(tabIndexProvider.notifier).state = 2;
+            },
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: _SchedulerCard(
+            icon: Icons.facebook,
+            platformName: 'Facebook',
+            color: const Color(0xFF1877F2),
+            onTap: () {
+              ref.read(tabIndexProvider.notifier).state = 2;
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBusinessInfo(BuildContext context, BusinessState state) {
     final business = state.currentBusiness;
     if (business == null) return const SizedBox.shrink();
@@ -379,6 +425,68 @@ class _QuickActionCard extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SchedulerCard extends StatelessWidget {
+  final IconData icon;
+  final String platformName;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _SchedulerCard({
+    required this.icon,
+    required this.platformName,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                platformName,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'No posts scheduled',
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                 ),
               ),
             ],

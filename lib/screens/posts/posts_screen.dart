@@ -9,6 +9,7 @@ import '../../config/app_theme.dart';
 import '../../models/post_model.dart';
 import '../../providers/business_provider.dart';
 import '../../providers/posts_provider.dart';
+import '../../providers/social_accounts_provider.dart';
 import '../../widgets/common/empty_widget.dart';
 import '../../widgets/common/error_widget.dart';
 import '../../widgets/common/loading_widget.dart';
@@ -274,6 +275,14 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
   File? _pickedImageFile;
   bool _isSaving = false;
   bool _isGeneratingCaption = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(socialAccountsProvider.notifier).fetchAccounts();
+    });
+  }
 
   @override
   void dispose() {
@@ -629,6 +638,91 @@ class _CreatePostSheetState extends ConsumerState<_CreatePostSheet> {
                     ),
                   ],
                 ),
+
+                // Instagram connection check
+                if (_selectedPlatform == 'instagram' ||
+                    _selectedPlatform == 'both')
+                  Builder(
+                    builder: (context) {
+                      final socialState = ref.watch(socialAccountsProvider);
+                      final igAccount = socialState.getInstagramAccount();
+                      if (igAccount != null) {
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppColors.success.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: AppColors.success.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.check_circle,
+                                    size: 16, color: AppColors.success),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Connected: @${igAccount.platformUsername ?? igAccount.platformUserId}',
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.success,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.orange.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: AppColors.orange.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.warning_amber,
+                                  size: 16, color: AppColors.orange),
+                              const SizedBox(width: 8),
+                              const Expanded(
+                                child: Text(
+                                  'Instagram not connected',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.orange,
+                                  ),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  ref
+                                      .read(socialAccountsProvider.notifier)
+                                      .connectInstagram();
+                                },
+                                child: const Text(
+                                  'Connect',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.orange,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+
                 const SizedBox(height: 24),
 
                 // Save Draft / Publish buttons

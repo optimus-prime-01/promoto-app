@@ -16,6 +16,7 @@ import '../screens/qr_review/qr_review_screen.dart';
 import '../screens/about/about_screen.dart';
 import '../screens/notifications/notifications_screen.dart';
 import '../screens/business/edit_business_screen.dart';
+import '../screens/social_accounts/social_accounts_screen.dart';
 
 class AppRoutes {
   AppRoutes._();
@@ -33,6 +34,7 @@ class AppRoutes {
   static const String about = '/about';
   static const String notifications = '/notifications';
   static const String editBusiness = '/edit-business';
+  static const String socialAccounts = '/social-accounts';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -119,6 +121,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.editBusiness,
         builder: (context, state) => const EditBusinessScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.socialAccounts,
+        builder: (context, state) => const SocialAccountsScreen(),
       ),
     ],
   );

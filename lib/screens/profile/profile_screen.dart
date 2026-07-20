@@ -202,6 +202,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           // Other options
           _buildMenuItem(
             context,
+            icon: Icons.link,
+            title: 'Connected Accounts',
+            onTap: () => context.push(AppRoutes.socialAccounts),
+          ),
+          _buildMenuItem(
+            context,
             icon: Icons.edit_outlined,
             title: 'Edit Business',
             onTap: () => context.push(AppRoutes.editBusiness),
