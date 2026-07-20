@@ -18,6 +18,10 @@ import '../screens/notifications/notifications_screen.dart';
 import '../screens/business/edit_business_screen.dart';
 import '../screens/social_accounts/social_accounts_screen.dart';
 import '../screens/scheduled_posts/scheduled_posts_screen.dart';
+import '../screens/instagram_scheduler/instagram_scheduler_screen.dart';
+import '../screens/facebook_scheduler/facebook_scheduler_screen.dart';
+import '../screens/whatsapp_scheduler/whatsapp_scheduler_screen.dart';
+import '../screens/whatsapp_settings/whatsapp_settings_screen.dart';
 import '../screens/comments/comments_screen.dart';
 
 class AppRoutes {
@@ -38,6 +42,10 @@ class AppRoutes {
   static const String editBusiness = '/edit-business';
   static const String socialAccounts = '/social-accounts';
   static const String scheduledPosts = '/scheduled-posts';
+  static const String instagramScheduler = '/instagram-scheduler';
+  static const String facebookScheduler = '/facebook-scheduler';
+  static const String whatsappScheduler = '/whatsapp-scheduler';
+  static const String whatsappSettings = '/whatsapp-settings';
   static const String comments = '/comments';
 }
 
@@ -137,6 +145,22 @@ final routerProvider = Provider<GoRouter>((ref) {
               state.uri.queryParameters['platform'];
           return ScheduledPostsScreen(platformFilter: platform);
         },
+      ),
+      GoRoute(
+        path: AppRoutes.instagramScheduler,
+        builder: (context, state) => const InstagramSchedulerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.facebookScheduler,
+        builder: (context, state) => const FacebookSchedulerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.whatsappScheduler,
+        builder: (context, state) => const WhatsappSchedulerScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.whatsappSettings,
+        builder: (context, state) => const WhatsappSettingsScreen(),
       ),
       GoRoute(
         path: AppRoutes.comments,

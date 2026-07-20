@@ -264,7 +264,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             platformName: 'WhatsApp',
             color: const Color(0xFF25D366),
             onTap: () {
-              context.push('${AppRoutes.scheduledPosts}?platform=both');
+              context.push(AppRoutes.whatsappScheduler);
             },
           ),
         ),
@@ -275,7 +275,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             platformName: 'Instagram',
             color: const Color(0xFFE1306C),
             onTap: () {
-              context.push('${AppRoutes.scheduledPosts}?platform=instagram');
+              context.push(AppRoutes.instagramScheduler);
             },
           ),
         ),
@@ -286,7 +286,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             platformName: 'Facebook',
             color: const Color(0xFF1877F2),
             onTap: () {
-              context.push('${AppRoutes.scheduledPosts}?platform=facebook');
+              context.push(AppRoutes.facebookScheduler);
             },
           ),
         ),
