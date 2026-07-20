@@ -64,7 +64,7 @@ class _WhatsappSchedulerScreenState
                     _buildQuickActions(context),
                     const SizedBox(height: 24),
                     Text(
-                      'Upcoming Messages',
+                      'Upcoming Birthday Wishes',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: 12),
@@ -108,10 +108,10 @@ class _WhatsappSchedulerScreenState
 
   Widget _buildMessagesList(BuildContext context, WhatsappState state) {
     final scheduledMessages = state.messages
-        .where((m) => m.status == 'scheduled')
+        .where((m) => m.status == 'scheduled' && m.type == 'birthday')
         .toList();
 
-    if (scheduledMessages.isEmpty && state.messages.isEmpty) {
+    if (scheduledMessages.isEmpty) {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -125,12 +125,12 @@ class _WhatsappSchedulerScreenState
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'No messages yet',
+                  'No upcoming birthday wishes',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Schedule a broadcast or offer message to get started.',
+                  'Birthday wishes will appear here when customers have upcoming birthdays.',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
@@ -144,9 +144,9 @@ class _WhatsappSchedulerScreenState
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: state.messages.length,
+      itemCount: scheduledMessages.length,
       itemBuilder: (context, index) {
-        final message = state.messages[index];
+        final message = scheduledMessages[index];
         return _MessageCard(
           message: message,
           onCancel: message.status == 'scheduled'

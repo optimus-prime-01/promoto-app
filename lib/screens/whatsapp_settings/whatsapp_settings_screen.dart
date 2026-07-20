@@ -21,6 +21,7 @@ class _WhatsappSettingsScreenState
       'Happy Birthday! Enjoy {percent}% off on your next visit at {business_name}';
   bool _festivalAutoPost = true;
   bool _broadcastEnabled = true;
+  double _discountPercent = 10;
   bool _isInitialized = false;
 
   @override
@@ -95,6 +96,8 @@ class _WhatsappSettingsScreenState
                   _buildFestivalSection(context),
                   const SizedBox(height: 24),
                   _buildBroadcastSection(context),
+                  const SizedBox(height: 24),
+                  _buildUniversalDiscountSection(context),
                 ],
               ),
             ),
@@ -276,6 +279,90 @@ class _WhatsappSettingsScreenState
               onChanged: (value) {
                 setState(() => _broadcastEnabled = value);
               },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUniversalDiscountSection(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.success.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.local_offer,
+                    color: AppColors.success,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Universal Discount',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'AI will use this discount in all offer messages - birthday wishes, broadcasts, and festival posts.',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Discount: ${_discountPercent.toInt()}%',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            Slider(
+              value: _discountPercent,
+              min: 5,
+              max: 50,
+              divisions: 9,
+              activeColor: AppColors.success,
+              label: '${_discountPercent.toInt()}%',
+              onChanged: (val) {
+                setState(() => _discountPercent = val);
+              },
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  // Save discount to settings
+                  ref.read(whatsappProvider.notifier).updateSettings({
+                    'birthdayOfferPercent': _discountPercent.toInt(),
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Discount set to ${_discountPercent.toInt()}% for all messages',
+                      ),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.check, size: 18),
+                label: const Text('Set Discount'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.success,
+                ),
+              ),
             ),
           ],
         ),
